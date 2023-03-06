@@ -1,0 +1,4 @@
+name: classes-plugin
+version: '${project.version}'
+main: my.dw.classesplugin.ClassesPlugin
+api-version: 1.19
