@@ -1,24 +1,22 @@
 package my.dw.classesplugin.listener;
 
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import my.dw.classesplugin.model.abilities.Ability;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+
+import static my.dw.classesplugin.model.Class.generateItemTriggerToAbilityMap;
 
 public class ClassAbilityListener implements Listener {
 
-    private final Map<UUID, Instant> abilityCooldowns;
+    private final Map<String, Ability> itemTriggerToAbility;
 
     public ClassAbilityListener() {
-        this.abilityCooldowns = new HashMap<>();
+        this.itemTriggerToAbility = generateItemTriggerToAbilityMap();
     }
 
     @EventHandler
@@ -28,36 +26,18 @@ public class ClassAbilityListener implements Listener {
         }
     }
 
-    // TODO: Move these to (java) classes
     private void handlePlayerAbilityEvent(PlayerInteractEvent event) {
-        if (Objects.isNull(event.getItem())) {
-            return;
-        }
-        // Assassin
-        if (event.getItem().getType() == Material.LEATHER) {
-            handleAssassinEvent(event.getPlayer());
-        }
-    }
-
-    // TODO: each class should have abilities, abilities each have implementations of handleAbility() method. CDs for said events are specified within ability classes
-    public void handleAssassinEvent(Player player) {
-        if (abilityCooldowns.containsKey(player.getUniqueId())
-                && isAbilityOnCooldown(abilityCooldowns.get(player.getUniqueId()), 30L)) {
-            player.sendMessage("Ability is on cooldown. Remaining CD: "
-                    + (30L - Duration.between(abilityCooldowns.get(player.getUniqueId()), Instant.now()).getSeconds())
-                    + " seconds");
+        if (Objects.isNull(event.getItem()) || Objects.isNull(event.getItem().getItemMeta())) {
             return;
         }
 
-        List<PotionEffect> effects = List.of(
-                new PotionEffect(PotionEffectType.INVISIBILITY, 300, 0, false, false),
-                new PotionEffect(PotionEffectType.SPEED, 300, 1, false, false));
-        player.addPotionEffects(effects);
+//        final String itemDisplayName = event.getItem().getItemMeta().getDisplayName();
+//        if (!itemTriggerToAbility.containsKey(itemDisplayName)) {
+//            return;
+//        }
 
-        abilityCooldowns.put(player.getUniqueId(), Instant.now());
+        // TODO: The itemTrigger should be based off itemMeta, not off of the base item name
+        itemTriggerToAbility.get(event.getItem().getType().toString()).handleAbility(event.getPlayer());
     }
 
-    private boolean isAbilityOnCooldown(final Instant lastUsedTime, final Long cooldown) {
-        return Duration.between(lastUsedTime, Instant.now()).getSeconds() < cooldown;
-    }
 }

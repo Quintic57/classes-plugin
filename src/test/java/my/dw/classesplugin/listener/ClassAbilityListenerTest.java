@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+// TODO: Implement
 public class ClassAbilityListenerTest {
 
     ClassAbilityListener classAbilityListener;
