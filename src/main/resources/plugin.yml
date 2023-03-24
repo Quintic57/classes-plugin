@@ -2,3 +2,10 @@ name: classes-plugin
 version: '${project.version}'
 main: my.dw.classesplugin.ClassesPlugin
 api-version: 1.19
+commands:
+  equipclass:
+    description: Equips the specified class
+    usage: "Usage: /<command> <classname>"
+  unequipclass:
+    description: Unequips the currently equipped class on the player
+    usage: "/<command>"
