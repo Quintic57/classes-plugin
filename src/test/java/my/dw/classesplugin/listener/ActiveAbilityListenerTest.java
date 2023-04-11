@@ -23,7 +23,7 @@ public class ActiveAbilityListenerTest {
     @Test
     public void temp() {
         System.out.println(AbilityUtils.itemTriggerToActiveAbilityMap);
-        System.out.println(AbilityUtils.abilityNameToActiveAbilityMap);
+        System.out.println(AbilityUtils.activeAbilityNameToActiveAbilityMap);
         System.out.println(Class.ASSASSIN.getAbilities());
     }
 }

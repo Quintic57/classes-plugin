@@ -11,26 +11,26 @@ import java.util.Map;
 public enum Weapon {
     ASSASSIN(Material.NETHERITE_SWORD, Map.of(Enchantment.DAMAGE_ALL, 5), "Kellen's Dagger"),
     SWORDSMAN(Material.IRON_SWORD, Map.of(Enchantment.DAMAGE_ALL, 3, Enchantment.FIRE_ASPECT, 1), "Excaliburn"),
-    ARCHER(Material.BOW, Map.of(), ""),
-    JUGGERNAUT(Material.WOODEN_SWORD, Map.of(), ""),
+    ARCHER(Material.BOW, Map.of(Enchantment.ARROW_DAMAGE, 3, Enchantment.ARROW_INFINITE, 1), "Deadeye"),
+    JUGGERNAUT(Material.WOODEN_SWORD, Map.of(Enchantment.SWEEPING_EDGE, 3), "Beat Stick"),
     SPECIALIST(Material.STONE_SWORD, Map.of(), ""),
     SCOUT(Material.BOW, Map.of(), ""),
     CAPTAIN(Material.STONE_SWORD, Map.of(), ""),
-    ALCHEMIST(Material.GOLDEN_SWORD, Map.of(), ""),
+    ALCHEMIST(Material.GOLDEN_SWORD, Map.of(Enchantment.FIRE_ASPECT, 2), "Golden Sword"),
     KNIGHT(Material.DIAMOND_SWORD, Map.of(), "");
 
-    private final ItemStack weapon;
+    private final ItemStack weaponItemStack;
 
-    Weapon(final Material weapon, Map<Enchantment, Integer> enchantments, final String displayName) {
-        this.weapon = new ItemStack(weapon);
-        final ItemMeta itemMeta = Bukkit.getItemFactory().getItemMeta(weapon);
+    Weapon(final Material weaponItemStack, Map<Enchantment, Integer> enchantments, final String displayName) {
+        this.weaponItemStack = new ItemStack(weaponItemStack);
+        final ItemMeta itemMeta = this.weaponItemStack.getItemMeta();
         itemMeta.setUnbreakable(true);
         itemMeta.setDisplayName(displayName);
-        this.weapon.setItemMeta(itemMeta);
-        this.weapon.addEnchantments(enchantments);
+        this.weaponItemStack.setItemMeta(itemMeta);
+        this.weaponItemStack.addEnchantments(enchantments);
     }
 
-    public ItemStack getWeapon() {
-        return weapon;
+    public ItemStack getWeaponItemStack() {
+        return weaponItemStack;
     }
 }

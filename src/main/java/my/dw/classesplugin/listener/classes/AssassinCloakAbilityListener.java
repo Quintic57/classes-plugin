@@ -1,4 +1,4 @@
-package my.dw.classesplugin.listener;
+package my.dw.classesplugin.listener.classes;
 
 import my.dw.classesplugin.model.Class;
 import my.dw.classesplugin.model.abilities.assassin.AssassinCloakAbility;
@@ -15,7 +15,7 @@ public class AssassinCloakAbilityListener implements Listener {
     private final AssassinCloakAbility assassinCloakAbility;
 
     public AssassinCloakAbilityListener() {
-        this.assassinCloakAbility = (AssassinCloakAbility) AbilityUtils.abilityNameToActiveAbilityMap.get("Cloak");
+        this.assassinCloakAbility = (AssassinCloakAbility) AbilityUtils.activeAbilityNameToActiveAbilityMap.get("Cloak");
     }
 
     @EventHandler
@@ -33,9 +33,7 @@ public class AssassinCloakAbilityListener implements Listener {
     }
 
     private boolean isAssassinCloakAbilityEvent(final Player attacker) {
-        return !attacker.getMetadata("character_class").isEmpty()
-                && !Objects.isNull(attacker.getMetadata("character_class").get(0))
-                && attacker.getMetadata("character_class").get(0).asString().equals(Class.ASSASSIN.name());
+        return Class.isClassEquipped(attacker, Class.ASSASSIN.name());
     }
 
 }

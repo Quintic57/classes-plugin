@@ -1,20 +1,46 @@
 package my.dw.classesplugin.model;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Map;
 
 public enum Armor {
     ASSASSIN(),
-    SWORDSMAN(),
-    ARCHER(),
-    JUGGERNAUT(),
+    SWORDSMAN(
+        Material.IRON_HELMET,
+        Material.IRON_CHESTPLATE,
+        Material.IRON_LEGGINGS,
+        Material.IRON_BOOTS,
+        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 3)
+    ),
+    ARCHER(
+        Material.CHAINMAIL_HELMET,
+        Material.CHAINMAIL_CHESTPLATE,
+        Material.CHAINMAIL_LEGGINGS,
+        Material.CHAINMAIL_BOOTS,
+        Map.of(Enchantment.PROTECTION_PROJECTILE, 3)
+    ),
+    JUGGERNAUT(
+        Material.NETHERITE_HELMET,
+        Material.NETHERITE_CHESTPLATE,
+        Material.NETHERITE_LEGGINGS,
+        Material.NETHERITE_BOOTS,
+        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 3)
+    ),
     SPECIALIST(),
     SCOUT(),
     CAPTAIN(),
-    ALCHEMIST(),
+    ALCHEMIST(
+        Material.GOLDEN_HELMET,
+        Material.GOLDEN_CHESTPLATE,
+        Material.GOLDEN_LEGGINGS,
+        Material.GOLDEN_BOOTS,
+        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 3)
+    ),
     KNIGHT();
 
     private ItemStack helmet;
@@ -41,13 +67,28 @@ public enum Armor {
           final Material bootsMat,
           final Map<Enchantment, Integer> bootEnchants) {
         final ItemStack helmet = new ItemStack(helmetMat);
+        final ItemMeta helmetMeta = helmet.getItemMeta();
+        helmetMeta.setUnbreakable(true);
+        helmet.setItemMeta(helmetMeta);
         helmet.addEnchantments(helmetEnchants);
+
         final ItemStack chestplate = new ItemStack(chestplateMat);
-        helmet.addEnchantments(chestEnchants);
+        final ItemMeta chestplateMeta = chestplate.getItemMeta();
+        chestplateMeta.setUnbreakable(true);
+        chestplate.setItemMeta(chestplateMeta);
+        chestplate.addEnchantments(chestEnchants);
+
         final ItemStack leggings = new ItemStack(leggingsMat);
-        helmet.addEnchantments(legEnchants);
+        final ItemMeta leggingsMeta = leggings.getItemMeta();
+        leggingsMeta.setUnbreakable(true);
+        leggings.setItemMeta(leggingsMeta);
+        leggings.addEnchantments(legEnchants);
+
         final ItemStack boots = new ItemStack(bootsMat);
-        helmet.addEnchantments(bootEnchants);
+        final ItemMeta bootsMeta = boots.getItemMeta();
+        bootsMeta.setUnbreakable(true);
+        boots.setItemMeta(bootsMeta);
+        boots.addEnchantments(bootEnchants);
 
         this.helmet = helmet;
         this.chestplate = chestplate;

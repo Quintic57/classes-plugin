@@ -1,17 +1,24 @@
 package my.dw.classesplugin.model.abilities;
 
+import my.dw.classesplugin.model.abilities.assassin.AssassinCloakAbility;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+// TODO: Is it possible to add multiple charges for abilities w/ the current framework? Making abilities cancellable?
 public abstract class ActiveAbility implements Ability {
 
     protected final String name;
@@ -30,17 +37,6 @@ public abstract class ActiveAbility implements Ability {
         this.duration = duration;
         this.cooldown = cooldown;
         this.playerCooldowns = playerCooldowns;
-    }
-
-    protected static ItemStack generateItemTrigger(final Material material, final String displayName) {
-        final ItemStack itemTrigger = new ItemStack(material);
-        final ItemMeta itemMeta = Bukkit.getItemFactory().getItemMeta(material);
-        itemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
-        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        itemMeta.setDisplayName(displayName);
-        itemTrigger.setItemMeta(itemMeta);
-
-        return itemTrigger;
     }
 
     public String getName() {
@@ -67,6 +63,10 @@ public abstract class ActiveAbility implements Ability {
     public boolean isAbilityOnCooldown(final UUID playerUUID) {
         return this.playerCooldowns.containsKey(playerUUID)
             && Duration.between(this.playerCooldowns.get(playerUUID), Instant.now()).getSeconds() < this.cooldown;
+    }
+
+    protected boolean isItemTriggerOnPlayer(final PlayerInventory inventory) {
+        return inventory.contains(this.itemTrigger) || inventory.getItemInOffHand().equals(this.itemTrigger);
     }
 
 }

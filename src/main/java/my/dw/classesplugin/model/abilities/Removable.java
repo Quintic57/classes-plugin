@@ -2,8 +2,8 @@ package my.dw.classesplugin.model.abilities;
 
 import org.bukkit.entity.Player;
 
-public interface Ability {
+public interface Removable {
 
-    boolean handleAbility(final Player player);
+    void removeAbility(final Player player);
 
 }

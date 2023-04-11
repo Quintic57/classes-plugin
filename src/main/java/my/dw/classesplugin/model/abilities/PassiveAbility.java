@@ -2,21 +2,15 @@ package my.dw.classesplugin.model.abilities;
 
 import org.bukkit.entity.Player;
 
-public abstract class PassiveAbility implements Ability {
+public abstract class PassiveAbility implements Ability, Removable {
 
     protected final String name;
 
-    protected final boolean conditional;
-
-    public PassiveAbility(final String name, final boolean conditional) {
+    public PassiveAbility(final String name) {
         this.name = name;
-        this.conditional = conditional;
     }
 
-    public boolean isConditional() {
-        return conditional;
+    public String getName() {
+        return name;
     }
-
-    public abstract void removeAbility(final Player player);
-
 }

@@ -1,5 +1,6 @@
 package my.dw.classesplugin.listener;
 
+import my.dw.classesplugin.model.Class;
 import my.dw.classesplugin.model.abilities.ActiveAbility;
 import my.dw.classesplugin.utils.AbilityUtils;
 import org.bukkit.entity.Player;
@@ -8,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -18,34 +18,39 @@ public class ActiveAbilityListener implements Listener {
 
     @EventHandler
     public void onPlayerInteractEvent(final PlayerInteractEvent event) {
-        if (isClassAbilityEvent(event)) {
-            handleClassAbilityEvent(event.getPlayer(), event.getItem().getItemMeta());
+        if (isActiveAbilityEvent(event.getAction(), event.getItem())) {
+            handleActiveAbilityEvent(event);
         }
     }
 
-    private boolean isClassAbilityEvent(final PlayerInteractEvent event) {
-        return ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)
-            && (!Objects.isNull(event.getItem()) && !Objects.isNull(event.getItem().getItemMeta()))
-            && !Objects.isNull(AbilityUtils.itemTriggerToActiveAbilityMap.get(event.getItem().getItemMeta())));
+    private boolean isActiveAbilityEvent(final Action action, final ItemStack item) {
+        return ((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)
+            && Objects.nonNull(item))
+            && AbilityUtils.itemTriggerToActiveAbilityMap.containsKey(item);
     }
 
-    private void handleClassAbilityEvent(final Player player, final ItemMeta abilityTrigger) {
-        // Check that the player has the character class metadata tag before attempting to resolve the ability
-        if (player.getMetadata("character_class").isEmpty()
-            || Objects.isNull(player.getMetadata("character_class").get(0))) {
+    private void handleActiveAbilityEvent(final PlayerInteractEvent event) {
+        final Player player = event.getPlayer();
+        final ActiveAbility ability = AbilityUtils.itemTriggerToActiveAbilityMap.get(event.getItem());
+
+        // Check that the player has the correct character class metadata tag before attempting to resolve the ability
+        if (!Class.isClassEquipped(player, AbilityUtils.abilityToClassNameMap.get(ability))) {
             return;
         }
-
-        final ActiveAbility ability = AbilityUtils.itemTriggerToActiveAbilityMap.get(abilityTrigger);
 
         if (ability.isAbilityOnCooldown(player.getUniqueId())) {
-            player.sendMessage(ability.getName() + " is on cooldown. Remaining CD: "
-                + (ability.getCooldown() - Duration.between(ability.getPlayerCooldowns().get(player.getUniqueId()),
-                Instant.now()).getSeconds()) + " seconds");
+            player.sendMessage(ability.getName()
+                + " is on cooldown. Remaining CD: "
+                + String.format("%.2f", ability.getCooldown() - (Duration.between(ability.getPlayerCooldowns().get(
+                    player.getUniqueId()), Instant.now()).toMillis() / 1000.0)) + " seconds");
+            event.setCancelled(true);
             return;
         }
 
-        ability.handleAbility(player);
+        final boolean activated = ability.handleAbility(player);
+        if (activated) {
+            ability.getPlayerCooldowns().put(player.getUniqueId(), Instant.now());
+        }
     }
 
 }
