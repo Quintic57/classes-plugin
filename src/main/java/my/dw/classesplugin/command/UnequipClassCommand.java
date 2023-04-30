@@ -6,8 +6,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Objects;
-
 //TODO: have this target players in the args
 public class UnequipClassCommand implements CommandExecutor {
 
@@ -22,7 +20,12 @@ public class UnequipClassCommand implements CommandExecutor {
             }
 
             final String className = player.getMetadata(Class.CLASS_METADATA_KEY).get(0).asString();
-            Class.unequipClass(player, Class.valueOf(className));
+            try {
+                Class.valueOf(className).unequipClass(player);
+            } catch (final IllegalArgumentException e) {
+                player.sendMessage("Provided classname " + className + " is not a valid classname");
+                return false;
+            }
 
             return true;
         }

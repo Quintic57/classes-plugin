@@ -1,5 +1,6 @@
 package my.dw.classesplugin.command;
 
+import my.dw.classesplugin.exception.ClassAlreadyEquippedException;
 import my.dw.classesplugin.model.Class;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,12 +21,14 @@ public class EquipClassCommand implements CommandExecutor {
             }
 
             final String className = args[0].toUpperCase();
-
             try {
                 final Class c = Class.valueOf(className);
                 c.equipClass(player);
-            } catch (IllegalArgumentException e) {
+            } catch (final IllegalArgumentException e) {
                 player.sendMessage("Provided classname " + className + " is not a valid classname");
+                return false;
+            } catch (final ClassAlreadyEquippedException e) {
+                player.sendMessage(e.getMessage());
                 return false;
             }
 

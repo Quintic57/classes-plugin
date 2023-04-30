@@ -1,42 +1,44 @@
 package my.dw.classesplugin.model.abilities;
 
-import my.dw.classesplugin.model.abilities.assassin.AssassinCloakAbility;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
+import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionEffect;
 
-import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-// TODO: Is it possible to add multiple charges for abilities w/ the current framework? Making abilities cancellable?
+// TODO: Is it possible to add multiple charges for abilities w/ the current framework? This would only apply to
+//  ArrowAbility and ActiveThrowableAbility. Maybe schedule a repeating task with a period of the ability CD to add charges
+//  back to the player, and cancel once max charges are reached.
+// TODO: Making active abilities cancellable? Maybe have this mapped to left-click
 public abstract class ActiveAbility implements Ability {
 
     protected final String name;
     protected final ItemStack itemTrigger;
     protected final int duration;
-    protected final int cooldown;
-    protected final Map<UUID, Instant> playerCooldowns;
+    protected final int staticCooldown;
+    protected final Map<UUID, Instant> playerToLastAbilityInstant;
 
     public ActiveAbility(final String name,
                          final ItemStack itemTrigger,
                          final int duration,
-                         final int cooldown,
-                         final Map<UUID, Instant> playerCooldowns) {
+                         final int staticCooldown,
+                         final Map<UUID, Instant> playerToLastAbilityInstant) {
         this.name = name;
         this.itemTrigger = itemTrigger;
         this.duration = duration;
-        this.cooldown = cooldown;
-        this.playerCooldowns = playerCooldowns;
+        this.staticCooldown = staticCooldown;
+        this.playerToLastAbilityInstant = playerToLastAbilityInstant;
+    }
+
+    public ActiveAbility(final String name,
+                         final ItemStack itemTrigger,
+                         final int duration,
+                         final int staticCooldown) {
+        this(name, itemTrigger, duration, staticCooldown, new HashMap<>());
     }
 
     public String getName() {
@@ -47,22 +49,30 @@ public abstract class ActiveAbility implements Ability {
         return itemTrigger;
     }
 
-    public long getCooldown() {
-        return cooldown;
+    public int getDuration() {
+        return duration;
     }
 
-    public Map<UUID, Instant> getPlayerCooldowns() {
-        return playerCooldowns;
+    public int getStaticCooldown() {
+        return staticCooldown;
+    }
+
+    public Instant getLastAbilityInstant(final UUID playerUUID) {
+        return playerToLastAbilityInstant.get(playerUUID);
+    }
+
+    public void setLastAbilityInstant(final UUID playerUUID, final Instant abilityInstant) {
+        playerToLastAbilityInstant.put(playerUUID, abilityInstant);
     }
 
     public boolean isAbilityDurationActive(final UUID playerUUID) {
-        return this.playerCooldowns.containsKey(playerUUID)
-            && Duration.between(this.playerCooldowns.get(playerUUID), Instant.now()).getSeconds() < this.duration;
+        return playerToLastAbilityInstant.containsKey(playerUUID)
+            && durationElapsedSinceInstant(playerToLastAbilityInstant.get(playerUUID)).getSeconds() < this.duration;
     }
 
     public boolean isAbilityOnCooldown(final UUID playerUUID) {
-        return this.playerCooldowns.containsKey(playerUUID)
-            && Duration.between(this.playerCooldowns.get(playerUUID), Instant.now()).getSeconds() < this.cooldown;
+        return playerToLastAbilityInstant.containsKey(playerUUID)
+            && durationElapsedSinceInstant(playerToLastAbilityInstant.get(playerUUID)).getSeconds() < this.staticCooldown;
     }
 
     protected boolean isItemTriggerOnPlayer(final PlayerInventory inventory) {

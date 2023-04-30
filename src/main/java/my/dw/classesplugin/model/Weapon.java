@@ -1,6 +1,5 @@
 package my.dw.classesplugin.model;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -14,10 +13,11 @@ public enum Weapon {
     ARCHER(Material.BOW, Map.of(Enchantment.ARROW_DAMAGE, 3, Enchantment.ARROW_INFINITE, 1), "Deadeye"),
     JUGGERNAUT(Material.WOODEN_SWORD, Map.of(Enchantment.SWEEPING_EDGE, 3), "Beat Stick"),
     SPECIALIST(Material.STONE_SWORD, Map.of(), ""),
-    SCOUT(Material.BOW, Map.of(), ""),
+    SCOUT(Material.BOW, Map.of(Enchantment.ARROW_INFINITE, 1), "Recurve Bow"),
     CAPTAIN(Material.STONE_SWORD, Map.of(), ""),
     ALCHEMIST(Material.GOLDEN_SWORD, Map.of(Enchantment.FIRE_ASPECT, 2), "Golden Sword"),
-    KNIGHT(Material.DIAMOND_SWORD, Map.of(), "");
+    KNIGHT(Material.DIAMOND_SWORD, Map.of(), ""),
+    SUMMONER(Material.STONE_SWORD, Map.of(), "");
 
     private final ItemStack weaponItemStack;
 
@@ -28,6 +28,10 @@ public enum Weapon {
         itemMeta.setDisplayName(displayName);
         this.weaponItemStack.setItemMeta(itemMeta);
         this.weaponItemStack.addEnchantments(enchantments);
+    }
+
+    Weapon() {
+        this.weaponItemStack = new ItemStack(Material.AIR);
     }
 
     public ItemStack getWeaponItemStack() {

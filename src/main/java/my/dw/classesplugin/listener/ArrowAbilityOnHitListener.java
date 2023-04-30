@@ -25,17 +25,17 @@ public class ArrowAbilityOnHitListener implements Listener {
         return projectile instanceof AbstractArrow
             && !projectile.getMetadata(ArrowAbility.ARROW_METADATA_KEY).isEmpty()
             && Objects.nonNull(projectile.getMetadata(ArrowAbility.ARROW_METADATA_KEY).get(0))
-            && AbilityUtils.arrowAbilityNameToArrowAbilityMap.containsKey(
+            && AbilityUtils.ABILITY_NAME_TO_ARROW_ABILITY.containsKey(
                 projectile.getMetadata(ArrowAbility.ARROW_METADATA_KEY).get(0).asString())
             && projectile.getShooter() instanceof Player;
     }
 
     private void handleArrowAbilityOnHitEvent(final ProjectileHitEvent event) {
         final AbstractArrow arrow = (AbstractArrow) event.getEntity();
-        final ArrowAbility ability = AbilityUtils.arrowAbilityNameToArrowAbilityMap.get(
+        final ArrowAbility ability = AbilityUtils.ABILITY_NAME_TO_ARROW_ABILITY.get(
             arrow.getMetadata(ArrowAbility.ARROW_METADATA_KEY).get(0).asString());
 
-        if (!Class.isClassEquipped((Player) arrow.getShooter(), AbilityUtils.abilityToClassNameMap.get(ability))) {
+        if (!Class.isClassEquipped((Player) arrow.getShooter(), AbilityUtils.ABILITY_TO_CLASS_NAME.get(ability))) {
             return;
         }
 

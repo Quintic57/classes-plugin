@@ -20,10 +20,9 @@ public class ActiveAbilityListenerTest {
 //        this.classAbilityListener.onPlayerInteractEvent();
 //    }
 
-    @Test
-    public void temp() {
-        System.out.println(AbilityUtils.itemTriggerToActiveAbilityMap);
-        System.out.println(AbilityUtils.activeAbilityNameToActiveAbilityMap);
-        System.out.println(Class.ASSASSIN.getAbilities());
-    }
+//    @Test
+//    public void temp() {
+//        System.out.println(AbilityUtils.ITEM_TRIGGER_TO_ACTIVE_ABILITY);
+//        System.out.println(Class.ASSASSIN.getAbilities());
+//    }
 }

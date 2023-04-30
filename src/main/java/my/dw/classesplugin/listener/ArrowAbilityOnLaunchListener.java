@@ -1,5 +1,7 @@
 package my.dw.classesplugin.listener;
 
+import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
+
 import my.dw.classesplugin.model.Class;
 import my.dw.classesplugin.model.abilities.ArrowAbility;
 import my.dw.classesplugin.utils.AbilityUtils;
@@ -9,7 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -26,22 +27,23 @@ public class ArrowAbilityOnLaunchListener implements Listener {
         return event.getEntity() instanceof Player
             && event.getProjectile() instanceof AbstractArrow
             && (Objects.nonNull(event.getConsumable())
-            && AbilityUtils.arrowTriggerToArrowAbilityMap.containsKey(event.getConsumable()));
+            && AbilityUtils.ARROW_TRIGGER_TO_ARROW_ABILITY.containsKey(event.getConsumable()));
     }
 
     private void handleActiveArrowAbilityEvent(final EntityShootBowEvent event) {
         final Player player = (Player) event.getEntity();
-        final ArrowAbility ability = AbilityUtils.arrowTriggerToArrowAbilityMap.get(event.getConsumable());
+        final ArrowAbility ability = AbilityUtils.ARROW_TRIGGER_TO_ARROW_ABILITY.get(event.getConsumable());
 
-        if (!Class.isClassEquipped(player, AbilityUtils.abilityToClassNameMap.get(ability))) {
+        if (!Class.isClassEquipped(player, AbilityUtils.ABILITY_TO_CLASS_NAME.get(ability))) {
             return;
         }
 
         if (ability.isAbilityOnCooldown(player.getUniqueId())) {
             player.sendMessage(ability.getName()
                 + " is on cooldown. Remaining CD: "
-                + String.format("%.2f", ability.getCooldown() - (Duration.between(ability.getPlayerCooldowns().get(
-                player.getUniqueId()), Instant.now()).toMillis() / 1000.0)) + " seconds");
+                + String.format("%.2f", ability.getCooldown() - (durationElapsedSinceInstant(
+                    ability.getLastAbilityInstant(player.getUniqueId())).toMillis() / 1000.0))
+                + " seconds");
 
             /* There's currently a bug when cancelling arrow events that causes the arrow to become invisible in the
              item slot. updateInventory() fixes the issue*/
@@ -52,7 +54,7 @@ public class ArrowAbilityOnLaunchListener implements Listener {
 
         ability.onProjectileLaunch((AbstractArrow) event.getProjectile());
         ability.handleAbility(player);
-        ability.getPlayerCooldowns().put(player.getUniqueId(), Instant.now());
+        ability.getPlayerToLastAbilityInstant().put(player.getUniqueId(), Instant.now());
     }
 
 }

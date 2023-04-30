@@ -1,5 +1,7 @@
 package my.dw.classesplugin.model.abilities.archer;
 
+import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
+
 import my.dw.classesplugin.ClassesPlugin;
 import my.dw.classesplugin.model.abilities.ArrowAbility;
 import my.dw.classesplugin.utils.Constants;
@@ -18,19 +20,22 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collection;
 import java.util.HashMap;
-
-import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
+import java.util.List;
 
 public class ArcherReconAbility extends ArrowAbility {
 
     private final PotionEffect effect;
 
-    private final static double CUBE_LENGTH = 20;
+    private static final double CUBE_LENGTH = 20;
 
     public ArcherReconAbility() {
         super(
             "Reconnaissance",
-            generateItemMetaTrigger(Material.SPECTRAL_ARROW, "Recon Arrow"),
+            generateItemMetaTrigger(
+                Material.SPECTRAL_ARROW,
+                "Recon Arrow",
+                List.of("Highlights all entities in a 10-block radius of the arrow's terminus", "Cooldown: 30s")
+            ),
             30,
             new HashMap<>()
         );

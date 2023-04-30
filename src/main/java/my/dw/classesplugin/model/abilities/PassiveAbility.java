@@ -1,8 +1,6 @@
 package my.dw.classesplugin.model.abilities;
 
-import org.bukkit.entity.Player;
-
-public abstract class PassiveAbility implements Ability, Removable {
+public abstract class PassiveAbility implements Ability, InitializedAbility {
 
     protected final String name;
 

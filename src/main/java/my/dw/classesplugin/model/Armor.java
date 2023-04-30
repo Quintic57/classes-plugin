@@ -1,6 +1,5 @@
 package my.dw.classesplugin.model;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -32,7 +31,15 @@ public enum Armor {
         Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 3)
     ),
     SPECIALIST(),
-    SCOUT(),
+    SCOUT(Material.LEATHER_HELMET,
+        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 3),
+        Material.LEATHER_CHESTPLATE,
+        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 3),
+        Material.LEATHER_LEGGINGS,
+        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 3),
+        Material.LEATHER_BOOTS,
+        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 3, Enchantment.PROTECTION_FALL, 4)
+    ),
     CAPTAIN(),
     ALCHEMIST(
         Material.GOLDEN_HELMET,
@@ -41,14 +48,26 @@ public enum Armor {
         Material.GOLDEN_BOOTS,
         Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 3)
     ),
-    KNIGHT();
+    KNIGHT(),
+    SUMMONER(
+        Material.LEATHER_HELMET,
+        Material.LEATHER_CHESTPLATE,
+        Material.LEATHER_LEGGINGS,
+        Material.LEATHER_BOOTS,
+        Map.of()
+    );
 
-    private ItemStack helmet;
-    private ItemStack chestplate;
-    private ItemStack leggings;
-    private ItemStack boots;
+    private final ItemStack helmet;
+    private final ItemStack chestplate;
+    private final ItemStack leggings;
+    private final ItemStack boots;
 
-    Armor() {}
+    Armor() {
+        this.helmet = new ItemStack(Material.AIR);
+        this.chestplate = new ItemStack(Material.AIR);
+        this.leggings = new ItemStack(Material.AIR);
+        this.boots = new ItemStack(Material.AIR);
+    }
 
     Armor(final Material helmet,
           final Material chestplate,

@@ -4,6 +4,7 @@ import my.dw.classesplugin.model.Class;
 import my.dw.classesplugin.model.abilities.Ability;
 import my.dw.classesplugin.model.abilities.ActiveAbility;
 import my.dw.classesplugin.model.abilities.ArrowAbility;
+import my.dw.classesplugin.model.abilities.ListenedAbility;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -14,6 +15,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -22,32 +25,40 @@ import java.util.stream.Collectors;
 
 public class AbilityUtils {
 
-    public final static Map<ItemStack, ActiveAbility> itemTriggerToActiveAbilityMap;
-    public final static Map<ItemStack, ArrowAbility> arrowTriggerToArrowAbilityMap;
-    public final static Map<String, ActiveAbility> activeAbilityNameToActiveAbilityMap;
-    public final static Map<String, ArrowAbility> arrowAbilityNameToArrowAbilityMap;
-    public final static Map<Ability, String> abilityToClassNameMap;
+    public static final Map<ItemStack, ActiveAbility> ITEM_TRIGGER_TO_ACTIVE_ABILITY;
+    public static final Map<ItemStack, ArrowAbility> ARROW_TRIGGER_TO_ARROW_ABILITY;
+    public static final Map<String, ArrowAbility> ABILITY_NAME_TO_ARROW_ABILITY;
+    public static final Map<Ability, String> ABILITY_TO_CLASS_NAME;
+    public static final List<ListenedAbility> LISTENED_ABILITIES;
 
     static {
-        itemTriggerToActiveAbilityMap = Arrays.stream(Class.values())
-                .flatMap(c -> c.getActiveAbilities().stream())
-                .collect(Collectors.toMap(ActiveAbility::getItemTrigger, a -> a));
-        arrowTriggerToArrowAbilityMap = Arrays.stream(Class.values())
-                .flatMap(c -> c.getArrowAbilities().stream())
-                .collect(Collectors.toMap(ArrowAbility::getArrowTrigger, a -> a));
-        activeAbilityNameToActiveAbilityMap = Arrays.stream(Class.values())
-                .flatMap(c -> c.getActiveAbilities().stream())
-                .collect(Collectors.toMap(ActiveAbility::getName, a -> a));
-        arrowAbilityNameToArrowAbilityMap = Arrays.stream(Class.values())
+        ITEM_TRIGGER_TO_ACTIVE_ABILITY = Arrays.stream(Class.values())
+            .flatMap(c -> c.getActiveAbilities().stream())
+            .collect(Collectors.toMap(ActiveAbility::getItemTrigger, a -> a));
+        ARROW_TRIGGER_TO_ARROW_ABILITY = Arrays.stream(Class.values())
+            .flatMap(c -> c.getArrowAbilities().stream())
+            .collect(Collectors.toMap(ArrowAbility::getArrowTrigger, a -> a));
+        ABILITY_NAME_TO_ARROW_ABILITY = Arrays.stream(Class.values())
             .flatMap(c -> c.getArrowAbilities().stream())
             .collect(Collectors.toMap(ArrowAbility::getName, a -> a));
-        abilityToClassNameMap = new HashMap<>();
+        ABILITY_TO_CLASS_NAME = new HashMap<>();
         Arrays.stream(Class.values())
-            .forEach(c -> c.getAbilities().forEach(a -> abilityToClassNameMap.put(a, c.name())));
+            .forEach(c -> c.getAbilities().forEach(a -> ABILITY_TO_CLASS_NAME.put(a, c.name())));
+        LISTENED_ABILITIES = Arrays.stream(Class.values())
+            .flatMap(c -> c.getAbilities().stream())
+            .filter(a -> a instanceof ListenedAbility)
+            .map(a -> (ListenedAbility) a)
+            .collect(Collectors.toList());
     }
 
     public static ItemStack generateItemMetaTrigger(final Material material, final String displayName) {
-        return generateItemMetaTrigger(material, displayName, List.of(), List.of());
+        return generateItemMetaTrigger(material, displayName, List.of("No description implemented"));
+    }
+
+    public static ItemStack generateItemMetaTrigger(final Material material,
+                                                    final String displayName,
+                                                    final List<String> lore) {
+        return generateItemMetaTrigger(material, displayName, lore, List.of());
     }
 
     public static ItemStack generateItemMetaTrigger(final Material material,
@@ -70,7 +81,15 @@ public class AbilityUtils {
                                                          final String displayName,
                                                          final List<PotionEffect> effects,
                                                          final Color color) {
-        return generatePotionMetaTrigger(material, displayName, effects, color, List.of(), List.of());
+        return generatePotionMetaTrigger(material, displayName, effects, color, List.of("No description implemented"));
+    }
+
+    public static ItemStack generatePotionMetaTrigger(final Material material,
+                                                      final String displayName,
+                                                      final List<PotionEffect> effects,
+                                                      final Color color,
+                                                      final List<String> lore) {
+        return generatePotionMetaTrigger(material, displayName, effects, color, lore, List.of());
     }
 
     public static ItemStack generatePotionMetaTrigger(final Material material,
@@ -93,12 +112,18 @@ public class AbilityUtils {
         return itemTrigger;
     }
 
-    public static void removeItemFromPlayer(final PlayerInventory inventory, final ItemStack item) {
-        if (inventory.getItemInOffHand().equals(item)) {
-            inventory.setItemInOffHand(null);
-        } else {
-            inventory.removeItem(item);
+    public static void removeItemsFromPlayer(final PlayerInventory inventory, final ItemStack... items) {
+        for (ItemStack item: items) {
+            if (inventory.getItemInOffHand().equals(item)) {
+                inventory.setItemInOffHand(null);
+                break;
+            }
         }
+        inventory.removeItem(items);
+    }
+
+    public static Duration durationElapsedSinceInstant(final Instant instant) {
+        return Duration.between(instant, Instant.now());
     }
 
 }
