@@ -15,8 +15,9 @@ public class PlayerDeathEventListener implements Listener {
         if (!player.getMetadata(Class.CLASS_METADATA_KEY).isEmpty()) {
             final String className = player.getMetadata(Class.CLASS_METADATA_KEY).get(0).asString();
             Class.valueOf(className).unequipClass(player);
+        } else {
+            player.getInventory().clear();
         }
-        player.getInventory().clear();
     }
 
 }

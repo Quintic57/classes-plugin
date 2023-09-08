@@ -1,7 +1,5 @@
 package my.dw.classesplugin.model.abilities.archer;
 
-import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
-
 import my.dw.classesplugin.ClassesPlugin;
 import my.dw.classesplugin.model.abilities.ArrowAbility;
 import org.bukkit.Color;
@@ -11,14 +9,16 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+
+import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
 
 // TODO: Investigate why this doesn't do as much dmg as intended
 public class ArcherExplosiveAbility extends ArrowAbility {
@@ -44,13 +44,13 @@ public class ArcherExplosiveAbility extends ArrowAbility {
                 List.of("Deals AOE explosive damage based on distance traveled", "Cooldown: 30s"),
                 List.of(ItemFlag.HIDE_POTION_EFFECTS)
             ),
-            1, // TODO: Change this back once you've had your fun
-            new HashMap<>()
+            1 // TODO: Change this back once you've had your fun
         );
     }
 
     @Override
-    public void onProjectileLaunch(final AbstractArrow arrow) {
+    public void onProjectileLaunch(final EntityShootBowEvent event) {
+        final AbstractArrow arrow = (AbstractArrow) event.getProjectile();
         final BukkitRunnable trailTask = new BukkitRunnable() {
             @Override
             public void run() {
@@ -84,10 +84,9 @@ public class ArcherExplosiveAbility extends ArrowAbility {
             new FixedMetadataValue(ClassesPlugin.getPlugin(), trailTask));
         arrow.setMetadata(INITIAL_SHOT_LOCATION_METADATA_KEY,
             new FixedMetadataValue(ClassesPlugin.getPlugin(), arrow.getLocation()));
-
         arrow.getWorld().playSound(arrow.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1F, 1F);
 
-        super.onProjectileLaunch(arrow);
+        super.onProjectileLaunch(event);
     }
 
     @Override

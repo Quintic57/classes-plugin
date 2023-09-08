@@ -1,7 +1,6 @@
 package my.dw.classesplugin.model.abilities;
 
-import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
-
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -10,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
+
 // TODO: Is it possible to add multiple charges for abilities w/ the current framework? This would only apply to
 //  ArrowAbility and ActiveThrowableAbility. Maybe schedule a repeating task with a period of the ability CD to add charges
 //  back to the player, and cancel once max charges are reached.
@@ -17,10 +18,18 @@ import java.util.UUID;
 public abstract class ActiveAbility implements Ability {
 
     protected final String name;
+    // TODO: Encapsulate this to a new object called ItemStackKey, which overrides equals method and uses isSimilar() method, and also overrides hashcode() by hashing itemMeta
     protected final ItemStack itemTrigger;
     protected final int duration;
-    protected final int staticCooldown;
+    final int staticCooldown;
     protected final Map<UUID, Instant> playerToLastAbilityInstant;
+
+    public ActiveAbility(final String name,
+                         final ItemStack itemTrigger,
+                         final int duration,
+                         final int staticCooldown) {
+        this(name, itemTrigger, duration, staticCooldown, new HashMap<>());
+    }
 
     public ActiveAbility(final String name,
                          final ItemStack itemTrigger,
@@ -34,13 +43,6 @@ public abstract class ActiveAbility implements Ability {
         this.playerToLastAbilityInstant = playerToLastAbilityInstant;
     }
 
-    public ActiveAbility(final String name,
-                         final ItemStack itemTrigger,
-                         final int duration,
-                         final int staticCooldown) {
-        this(name, itemTrigger, duration, staticCooldown, new HashMap<>());
-    }
-
     public String getName() {
         return name;
     }
@@ -49,11 +51,7 @@ public abstract class ActiveAbility implements Ability {
         return itemTrigger;
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public int getStaticCooldown() {
+    public int getCooldown(final UUID playerUUID) {
         return staticCooldown;
     }
 
@@ -78,5 +76,7 @@ public abstract class ActiveAbility implements Ability {
     protected boolean isItemTriggerOnPlayer(final PlayerInventory inventory) {
         return inventory.contains(this.itemTrigger) || inventory.getItemInOffHand().equals(this.itemTrigger);
     }
+
+    public abstract boolean handleAbility(final Player player, final ItemStack itemTrigger);
 
 }

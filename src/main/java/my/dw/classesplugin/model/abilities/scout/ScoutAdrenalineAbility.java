@@ -1,16 +1,17 @@
 package my.dw.classesplugin.model.abilities.scout;
 
-import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
-
 import my.dw.classesplugin.model.abilities.ActiveAbility;
 import my.dw.classesplugin.utils.Constants;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
+
+import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
 
 public class ScoutAdrenalineAbility extends ActiveAbility {
 
@@ -35,7 +36,7 @@ public class ScoutAdrenalineAbility extends ActiveAbility {
     }
 
     @Override
-    public boolean handleAbility(final Player player) {
+    public boolean handleAbility(final Player player, ItemStack itemTrigger) {
         player.getWorld().playSound(player.getLocation(), Sound.ITEM_BOTTLE_FILL, 1F, 1F);
         return player.addPotionEffects(effects);
     }

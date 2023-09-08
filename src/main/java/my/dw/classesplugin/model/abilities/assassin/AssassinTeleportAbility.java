@@ -1,11 +1,11 @@
 package my.dw.classesplugin.model.abilities.assassin;
 
-import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
-
 import my.dw.classesplugin.model.abilities.ActiveThrowableAbility;
 import org.bukkit.Material;
 
 import java.util.List;
+
+import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
 
 public class AssassinTeleportAbility extends ActiveThrowableAbility {
 
@@ -15,7 +15,7 @@ public class AssassinTeleportAbility extends ActiveThrowableAbility {
             generateItemMetaTrigger(
                 Material.ENDER_PEARL,
                 "Teleport",
-                List.of("Throws a projectile that teleports the user to the projectile's terminus", "Cooldown: 60s")
+                List.of("Throws a projectile that teleports the user to the projectile's terminus", "Charge Refresh: 60s")
             ),
             0,
             60

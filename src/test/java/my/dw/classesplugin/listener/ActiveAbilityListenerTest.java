@@ -1,9 +1,5 @@
 package my.dw.classesplugin.listener;
 
-import my.dw.classesplugin.model.Class;
-import my.dw.classesplugin.utils.AbilityUtils;
-import org.junit.jupiter.api.Test;
-
 // TODO: Implement
 public class ActiveAbilityListenerTest {
 

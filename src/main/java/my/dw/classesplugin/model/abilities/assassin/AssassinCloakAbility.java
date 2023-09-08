@@ -1,8 +1,5 @@
 package my.dw.classesplugin.model.abilities.assassin;
 
-import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
-import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
-
 import my.dw.classesplugin.ClassesPlugin;
 import my.dw.classesplugin.model.Class;
 import my.dw.classesplugin.model.abilities.ActiveAbility;
@@ -13,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -20,6 +18,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
+import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
 
 public class AssassinCloakAbility extends ActiveAbility implements ListenedAbility {
 
@@ -44,7 +45,7 @@ public class AssassinCloakAbility extends ActiveAbility implements ListenedAbili
     }
 
     @Override
-    public boolean handleAbility(final Player player) {
+    public boolean handleAbility(final Player player, final ItemStack itemTrigger) {
         final boolean abilityApplied = player.addPotionEffects(this.effects);
         if (!abilityApplied) {
             return false;
@@ -55,14 +56,14 @@ public class AssassinCloakAbility extends ActiveAbility implements ListenedAbili
             public void run() {
                 if (Class.isClassEquipped(player, Class.ASSASSIN.name())
                     && !isItemTriggerOnPlayer(player.getInventory())) {
-                    player.getInventory().addItem(AssassinCloakAbility.this.itemTrigger);
+                    player.getInventory().addItem(itemTrigger);
                 }
             }
         };
         task.runTaskLater(ClassesPlugin.getPlugin(), (long) this.duration * Constants.TICKS_PER_SECOND);
         player.getActivePotionEffects().forEach(p -> player.addPotionEffect(
             new PotionEffect(p.getType(), p.getDuration() + 1, p.getAmplifier(), false, false)));
-        AbilityUtils.removeItemsFromPlayer(player.getInventory(), this.itemTrigger);
+        AbilityUtils.removeItemsFromPlayer(player.getInventory(), itemTrigger);
 
         return true;
     }

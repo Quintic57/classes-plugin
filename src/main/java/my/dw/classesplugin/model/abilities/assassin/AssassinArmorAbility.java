@@ -1,11 +1,11 @@
 package my.dw.classesplugin.model.abilities.assassin;
 
-import static org.bukkit.potion.PotionEffect.INFINITE_DURATION;
-
 import my.dw.classesplugin.model.abilities.PassiveAbility;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import static org.bukkit.potion.PotionEffect.INFINITE_DURATION;
 
 public class AssassinArmorAbility extends PassiveAbility {
 
@@ -17,13 +17,8 @@ public class AssassinArmorAbility extends PassiveAbility {
     }
 
     @Override
-    public boolean handleAbility(final Player player) {
-        return player.addPotionEffect(effect);
-    }
-
-    @Override
     public void initialize(final Player player) {
-        handleAbility(player);
+        player.addPotionEffect(effect);
     }
 
     @Override

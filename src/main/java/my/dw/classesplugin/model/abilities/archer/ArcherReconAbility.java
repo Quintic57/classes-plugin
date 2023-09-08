@@ -1,7 +1,5 @@
 package my.dw.classesplugin.model.abilities.archer;
 
-import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
-
 import my.dw.classesplugin.ClassesPlugin;
 import my.dw.classesplugin.model.abilities.ArrowAbility;
 import my.dw.classesplugin.utils.Constants;
@@ -19,8 +17,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
+
+import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
 
 public class ArcherReconAbility extends ArrowAbility {
 
@@ -36,8 +35,7 @@ public class ArcherReconAbility extends ArrowAbility {
                 "Recon Arrow",
                 List.of("Highlights all entities in a 10-block radius of the arrow's terminus", "Cooldown: 30s")
             ),
-            30,
-            new HashMap<>()
+            30
         );
         //TODO: Temp solution, in team games marked entities will be glowing to everyone, needs to only be glowing for
         // the archer

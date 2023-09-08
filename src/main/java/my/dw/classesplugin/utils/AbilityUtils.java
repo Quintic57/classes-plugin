@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 
 public class AbilityUtils {
 
-    public static final Map<ItemStack, ActiveAbility> ITEM_TRIGGER_TO_ACTIVE_ABILITY;
-    public static final Map<ItemStack, ArrowAbility> ARROW_TRIGGER_TO_ARROW_ABILITY;
+    public static final Map<ItemStackKey, ActiveAbility> ITEM_TRIGGER_TO_ACTIVE_ABILITY;
+    public static final Map<ItemStackKey, ArrowAbility> ARROW_TRIGGER_TO_ARROW_ABILITY;
     public static final Map<String, ArrowAbility> ABILITY_NAME_TO_ARROW_ABILITY;
     public static final Map<Ability, String> ABILITY_TO_CLASS_NAME;
     public static final List<ListenedAbility> LISTENED_ABILITIES;
@@ -34,10 +34,10 @@ public class AbilityUtils {
     static {
         ITEM_TRIGGER_TO_ACTIVE_ABILITY = Arrays.stream(Class.values())
             .flatMap(c -> c.getActiveAbilities().stream())
-            .collect(Collectors.toMap(ActiveAbility::getItemTrigger, a -> a));
+            .collect(Collectors.toMap(a -> new ItemStackKey(a.getItemTrigger()), a -> a));
         ARROW_TRIGGER_TO_ARROW_ABILITY = Arrays.stream(Class.values())
             .flatMap(c -> c.getArrowAbilities().stream())
-            .collect(Collectors.toMap(ArrowAbility::getArrowTrigger, a -> a));
+            .collect(Collectors.toMap(a -> new ItemStackKey(a.getArrowTrigger()), a -> a));
         ABILITY_NAME_TO_ARROW_ABILITY = Arrays.stream(Class.values())
             .flatMap(c -> c.getArrowAbilities().stream())
             .collect(Collectors.toMap(ArrowAbility::getName, a -> a));
@@ -89,7 +89,7 @@ public class AbilityUtils {
                                                       final List<PotionEffect> effects,
                                                       final Color color,
                                                       final List<String> lore) {
-        return generatePotionMetaTrigger(material, displayName, effects, color, lore, List.of());
+        return generatePotionMetaTrigger(material, displayName, effects, color, lore, 1);
     }
 
     public static ItemStack generatePotionMetaTrigger(final Material material,
@@ -97,6 +97,16 @@ public class AbilityUtils {
                                                       final List<PotionEffect> effects,
                                                       final Color color,
                                                       final List<String> lore,
+                                                      final int amount) {
+        return generatePotionMetaTrigger(material, displayName, effects, color, lore, amount, List.of());
+    }
+
+    public static ItemStack generatePotionMetaTrigger(final Material material,
+                                                      final String displayName,
+                                                      final List<PotionEffect> effects,
+                                                      final Color color,
+                                                      final List<String> lore,
+                                                      final int amount,
                                                       final List<ItemFlag> itemFlags) {
         final ItemStack itemTrigger = new ItemStack(material);
         final PotionMeta itemMeta = (PotionMeta) itemTrigger.getItemMeta();
@@ -108,8 +118,17 @@ public class AbilityUtils {
         itemMeta.setLore(lore);
         itemFlags.forEach(itemMeta::addItemFlags);
         itemTrigger.setItemMeta(itemMeta);
+        itemTrigger.setAmount(amount);
 
         return itemTrigger;
+    }
+
+    public static void addItemForPlayer(final PlayerInventory inventory, final ItemStack item) {
+        if (inventory.getItemInOffHand().isSimilar(item)) {
+            inventory.getItemInOffHand().setAmount(inventory.getItemInOffHand().getAmount() + item.getAmount());
+        } else {
+            inventory.addItem(item);
+        }
     }
 
     public static void removeItemsFromPlayer(final PlayerInventory inventory, final ItemStack... items) {

@@ -1,7 +1,5 @@
 package my.dw.classesplugin.model.abilities.juggernaut;
 
-import static org.bukkit.potion.PotionEffect.INFINITE_DURATION;
-
 import my.dw.classesplugin.ClassesPlugin;
 import my.dw.classesplugin.model.abilities.PassiveAbility;
 import my.dw.classesplugin.utils.Constants;
@@ -13,6 +11,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.bukkit.potion.PotionEffect.INFINITE_DURATION;
 
 public class JuggernautArmorAbility extends PassiveAbility {
 
@@ -47,16 +47,9 @@ public class JuggernautArmorAbility extends PassiveAbility {
     }
 
     @Override
-    public boolean handleAbility(final Player player) {
+    public void initialize(final Player player) {
         player.addPotionEffect(slowEffect);
         playerToLastRecordedLocation.put(player, player.getLocation());
-
-        return true;
-    }
-
-    @Override
-    public void initialize(final Player player) {
-        handleAbility(player);
     }
 
     @Override

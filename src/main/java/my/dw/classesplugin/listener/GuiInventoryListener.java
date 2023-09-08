@@ -1,7 +1,5 @@
 package my.dw.classesplugin.listener;
 
-import static my.dw.classesplugin.ui.SelectClassGui.DISPLAY_ITEM_TO_CLASS_NAME;
-
 import my.dw.classesplugin.exception.ClassAlreadyEquippedException;
 import my.dw.classesplugin.model.Class;
 import my.dw.classesplugin.ui.SelectClassGui;
@@ -11,6 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.Objects;
+
+import static my.dw.classesplugin.ui.SelectClassGui.DISPLAY_ITEM_TO_CLASS_NAME;
 
 public class GuiInventoryListener implements Listener {
 

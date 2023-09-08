@@ -8,17 +8,25 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+// TODO: Should probably convert this to an ActiveAbility (similar to how ScoutGlideAbility works)
 public class SwordsmanShieldAbility implements Ability, ListenedAbility {
 
     private static final double MIN_DAMAGE_THRESHOLD = 0.5;
 
     private static final double SHIELD_DAMAGE_REDUCTION = 0.85;
 
-    @Override
-    public boolean handleAbility(final Player player) {
-        return true; // ability logic is handled inherently by the shield item
+    private final ItemStack shieldItem;
+
+    public SwordsmanShieldAbility() {
+        final ItemStack shieldItem = new ItemStack(Material.SHIELD);
+        final ItemMeta shieldMeta = shieldItem.getItemMeta();
+        shieldMeta.setUnbreakable(true);
+        shieldItem.setItemMeta(shieldMeta);
+        this.shieldItem = shieldItem;
     }
 
     @Override
@@ -48,10 +56,11 @@ public class SwordsmanShieldAbility implements Ability, ListenedAbility {
         // TODO: Cleaner way to do this?
         if (defender.getHealth() - damageAfterReduction <= 0) {
             defender.getInventory().remove(Material.SHIELD);
-            final BukkitRunnable killTask = new BukkitRunnable() {
+            final BukkitRunnable killTask =  new BukkitRunnable() {
                 @Override
                 public void run() {
-                    defender.damage(damageAfterReduction * 2, entityDamageByEntityEvent.getDamager());
+                    defender.getInventory().addItem(shieldItem);
+                    defender.damage(1000, entityDamageByEntityEvent.getDamager());
                 }
             };
             killTask.runTaskLater(ClassesPlugin.getPlugin(), 4);

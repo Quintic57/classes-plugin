@@ -17,6 +17,7 @@ import my.dw.classesplugin.model.abilities.archer.ArcherReconAbility;
 import my.dw.classesplugin.model.abilities.assassin.AssassinArmorAbility;
 import my.dw.classesplugin.model.abilities.assassin.AssassinCloakAbility;
 import my.dw.classesplugin.model.abilities.assassin.AssassinSmokeAbility;
+import my.dw.classesplugin.model.abilities.assassin.AssassinSmokeArrowAbility;
 import my.dw.classesplugin.model.abilities.assassin.AssassinTeleportAbility;
 import my.dw.classesplugin.model.abilities.juggernaut.JuggernautArmorAbility;
 import my.dw.classesplugin.model.abilities.juggernaut.JuggernautInvulnerAbility;
@@ -53,7 +54,7 @@ public enum Class {
         List.of(new AlchemistDamageAbility(), new AlchemistPoisonAbility(), new AlchemistDisAbility())
     ) {
         @Override
-        List<ItemStack> getInventory() {
+        public List<ItemStack> getInventory() {
             return defaultInventory();
         }
     },
@@ -68,7 +69,7 @@ public enum Class {
         )
     ) {
         @Override
-        List<ItemStack> getInventory() {
+        public List<ItemStack> getInventory() {
             final List<ItemStack> inventory = new ArrayList<>();
 
             // Weapon
@@ -89,12 +90,13 @@ public enum Class {
         List.of(
             new AssassinCloakAbility(),
             new AssassinSmokeAbility(),
+            new AssassinSmokeArrowAbility(),
             new AssassinTeleportAbility(),
             new AssassinArmorAbility()
         )
     ) {
         @Override
-        List<ItemStack> getInventory() {
+        public List<ItemStack> getInventory() {
             final List<ItemStack> inventory = defaultInventory();
 
             // Crossbow
@@ -122,7 +124,7 @@ public enum Class {
         List.of()
     ) {
         @Override
-        List<ItemStack> getInventory() {
+        public List<ItemStack> getInventory() {
             return defaultInventory();
         }
     },
@@ -132,7 +134,7 @@ public enum Class {
         List.of(new JuggernautArmorAbility(), new JuggernautInvulnerAbility())
     ) {
         @Override
-        List<ItemStack> getInventory() {
+        public List<ItemStack> getInventory() {
             return defaultInventory();
         }
     },
@@ -142,7 +144,7 @@ public enum Class {
         List.of()
     ) {
         @Override
-        List<ItemStack> getInventory() {
+        public List<ItemStack> getInventory() {
             return defaultInventory();
         }
     },
@@ -157,7 +159,7 @@ public enum Class {
         )
     ) {
         @Override
-        List<ItemStack> getInventory() {
+        public List<ItemStack> getInventory() {
             final List<ItemStack> inventory = new ArrayList<>();
 
             // Weapon
@@ -178,7 +180,7 @@ public enum Class {
         List.of()
     ) {
         @Override
-        List<ItemStack> getInventory() {
+        public List<ItemStack> getInventory() {
             return defaultInventory();
         }
     },
@@ -188,7 +190,7 @@ public enum Class {
         List.of(new SummonerLightningAbility())
     ) {
         @Override
-        List<ItemStack> getInventory() {
+        public List<ItemStack> getInventory() {
             return defaultInventory();
         }
     },
@@ -198,7 +200,7 @@ public enum Class {
         List.of(new SwordsmanFrenzyAbility(), new SwordsmanShieldAbility())
     ) {
         @Override
-        List<ItemStack> getInventory() {
+        public List<ItemStack> getInventory() {
             final List<ItemStack> inventory = defaultInventory();
 
             final ItemStack shield = new ItemStack(Material.SHIELD);
@@ -237,7 +239,7 @@ public enum Class {
         return abilities;
     }
 
-    abstract List<ItemStack> getInventory();
+    public abstract List<ItemStack> getInventory();
 
     List<ItemStack> defaultInventory() {
         final List<ItemStack> inventory = new ArrayList<>();

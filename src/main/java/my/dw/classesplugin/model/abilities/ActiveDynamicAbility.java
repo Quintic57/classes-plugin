@@ -1,11 +1,11 @@
 package my.dw.classesplugin.model.abilities;
 
-import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
-
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 import java.util.UUID;
+
+import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
 
 public abstract class ActiveDynamicAbility extends ActiveAbility {
 
@@ -29,7 +29,8 @@ public abstract class ActiveDynamicAbility extends ActiveAbility {
                 < playerToDynamicCooldown.get(playerUUID);
     }
 
-    public int getDynamicCooldown(final UUID playerUUID) {
+    @Override
+    public int getCooldown(final UUID playerUUID) {
         return playerToDynamicCooldown.get(playerUUID);
     }
 

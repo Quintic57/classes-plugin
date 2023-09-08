@@ -11,4 +11,5 @@ public abstract class PassiveAbility implements Ability, InitializedAbility {
     public String getName() {
         return name;
     }
+
 }

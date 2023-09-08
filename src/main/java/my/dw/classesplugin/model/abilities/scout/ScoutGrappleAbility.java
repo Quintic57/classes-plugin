@@ -1,22 +1,22 @@
 package my.dw.classesplugin.model.abilities.scout;
 
-import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
-
 import my.dw.classesplugin.ClassesPlugin;
 import my.dw.classesplugin.model.abilities.ArrowAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+
+import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
 
 public class ScoutGrappleAbility extends ArrowAbility {
 
@@ -37,17 +37,17 @@ public class ScoutGrappleAbility extends ArrowAbility {
                 List.of("Teleports the user to the arrow's terminus. Can only be used to travel up", "Cooldown: 30s"),
                 List.of(ItemFlag.HIDE_POTION_EFFECTS)
             ),
-            1, // TODO: Change back
-            new HashMap<>()
+            1 // TODO: Change back
         );
     }
 
     @Override
-    public void onProjectileLaunch(final AbstractArrow arrow) {
+    public void onProjectileLaunch(final EntityShootBowEvent event) {
+        final AbstractArrow arrow = (AbstractArrow) event.getProjectile();
         arrow.setMetadata(INITIAL_SHOT_LOCATION_METADATA_KEY,
             new FixedMetadataValue(ClassesPlugin.getPlugin(), arrow.getLocation()));
 
-        super.onProjectileLaunch(arrow);
+        super.onProjectileLaunch(event);
     }
 
     @Override

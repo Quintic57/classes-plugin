@@ -11,10 +11,8 @@ import my.dw.classesplugin.listener.PlayerDeathEventListener;
 import my.dw.classesplugin.listener.classes.EntityDamageByEntityEventListener;
 import my.dw.classesplugin.listener.classes.EntityDamageEventListener;
 import my.dw.classesplugin.listener.classes.EntityToggleGlideEventListener;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-// TODO: Add death handler to remove class metadata on death, so a new class can be selected
 public final class ClassesPlugin extends JavaPlugin {
 
     private static ClassesPlugin plugin;

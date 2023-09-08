@@ -1,8 +1,5 @@
 package my.dw.classesplugin.model.abilities.scout;
 
-import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
-import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
-
 import my.dw.classesplugin.ClassesPlugin;
 import my.dw.classesplugin.model.Class;
 import my.dw.classesplugin.model.abilities.ActiveDynamicAbility;
@@ -15,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -24,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
+import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
 
 public class ScoutGlideAbility extends ActiveDynamicAbility implements InitializedAbility, ListenedAbility {
 
@@ -46,7 +47,7 @@ public class ScoutGlideAbility extends ActiveDynamicAbility implements Initializ
     }
 
     @Override
-    public boolean handleAbility(final Player player) {
+    public boolean handleAbility(final Player player, ItemStack itemTrigger) {
         return false; // ability logic is handled inherently by the elytra item functionality
     }
 
@@ -141,4 +142,5 @@ public class ScoutGlideAbility extends ActiveDynamicAbility implements Initializ
         playerToLastAbilityInstant.remove(player.getUniqueId());
         playerToDynamicCooldown.remove(player.getUniqueId());
     }
+
 }

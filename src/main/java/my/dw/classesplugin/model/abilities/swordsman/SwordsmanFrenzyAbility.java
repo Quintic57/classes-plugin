@@ -1,7 +1,5 @@
 package my.dw.classesplugin.model.abilities.swordsman;
 
-import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
-
 import my.dw.classesplugin.ClassesPlugin;
 import my.dw.classesplugin.model.Class;
 import my.dw.classesplugin.model.abilities.ActiveAbility;
@@ -11,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -19,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
 
 //TODO: This might be better as a toggleable ability (i.e. no CD, buffs only last whilst toggled on)
 public class SwordsmanFrenzyAbility extends ActiveAbility implements ListenedAbility {
@@ -36,8 +37,8 @@ public class SwordsmanFrenzyAbility extends ActiveAbility implements ListenedAbi
                 Material.BLAZE_POWDER,
                 "Frenzy",
                 List.of(
-                    "Increases outgoing damage by 6 and movement speed by 20%,",
-                    "also amplifies incoming damage by 100%",
+                    "Increases outgoing damage by 6 and speed by 20% for 20s,",
+                    "also amplifies incoming damage by 75% for 20s",
                     "Cooldown: 30s"
                 )
             ),
@@ -52,7 +53,7 @@ public class SwordsmanFrenzyAbility extends ActiveAbility implements ListenedAbi
     }
 
     @Override
-    public boolean handleAbility(final Player player) {
+    public boolean handleAbility(final Player player, ItemStack itemTrigger) {
         playerBerserkStatus.put(player.getUniqueId(), true);
         final BukkitRunnable task = new BukkitRunnable() {
             @Override

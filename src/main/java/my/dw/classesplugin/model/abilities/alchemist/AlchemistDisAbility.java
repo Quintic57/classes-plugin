@@ -1,7 +1,5 @@
 package my.dw.classesplugin.model.abilities.alchemist;
 
-import static my.dw.classesplugin.utils.AbilityUtils.generatePotionMetaTrigger;
-
 import my.dw.classesplugin.model.abilities.ActiveThrowableAbility;
 import my.dw.classesplugin.utils.Constants;
 import org.bukkit.Color;
@@ -10,6 +8,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
+
+import static my.dw.classesplugin.utils.AbilityUtils.generatePotionMetaTrigger;
 
 public class AlchemistDisAbility extends ActiveThrowableAbility {
 
@@ -24,7 +24,7 @@ public class AlchemistDisAbility extends ActiveThrowableAbility {
                     new PotionEffect(PotionEffectType.SLOW, 5 * Constants.TICKS_PER_SECOND, 2)
                 ),
                 Color.BLACK,
-                List.of("Continuously blinds and slows in a large AOE", "Cooldown: 15s")
+                List.of("Continuously blinds and slows in a large AOE", "Number of Charges: 1", "Cooldown: 15s")
             ),
             0,
             15
