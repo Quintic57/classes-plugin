@@ -15,7 +15,7 @@ public class AssassinTeleportAbility extends ActiveThrowableAbility {
             generateItemMetaTrigger(
                 Material.ENDER_PEARL,
                 "Teleport",
-                List.of("Throws a projectile that teleports the user to the projectile's terminus", "Charge Refresh: 60s")
+                List.of("Throws a projectile that teleports the user to its terminus", "Cooldown: 60s")
             ),
             0,
             60

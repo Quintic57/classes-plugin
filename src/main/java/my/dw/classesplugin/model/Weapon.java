@@ -15,7 +15,7 @@ public enum Weapon {
     SPECIALIST(Material.STONE_SWORD, Map.of(), ""),
     SCOUT(Material.BOW, Map.of(Enchantment.ARROW_INFINITE, 1), "Recurve Bow"),
     CAPTAIN(Material.STONE_SWORD, Map.of(), ""),
-    ALCHEMIST(Material.GOLDEN_SWORD, Map.of(Enchantment.FIRE_ASPECT, 2), "Golden Sword"),
+    ALCHEMIST(Material.GOLDEN_SWORD, Map.of(Enchantment.FIRE_ASPECT, 2), "Citrinitas"),
     KNIGHT(Material.DIAMOND_SWORD, Map.of(), ""),
     SUMMONER(Material.STONE_SWORD, Map.of(), "");
 

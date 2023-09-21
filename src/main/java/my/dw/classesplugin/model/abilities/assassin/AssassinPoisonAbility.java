@@ -1,4 +1,4 @@
-package my.dw.classesplugin.model.abilities.archer;
+package my.dw.classesplugin.model.abilities.assassin;
 
 import my.dw.classesplugin.model.abilities.ArrowAbility;
 import my.dw.classesplugin.utils.Constants;
@@ -11,20 +11,20 @@ import java.util.List;
 
 import static my.dw.classesplugin.utils.AbilityUtils.generatePotionMetaTrigger;
 
-public class ArcherIceAbility extends ArrowAbility {
+public class AssassinPoisonAbility extends ArrowAbility {
 
-    public ArcherIceAbility() {
+    public AssassinPoisonAbility() {
         super(
-            "Ice Arrow",
+            "Poison Dart",
             generatePotionMetaTrigger(
                 Material.TIPPED_ARROW,
-                "Ice Tipped Arrow",
-                List.of(new PotionEffect(PotionEffectType.SLOW, 8 * Constants.TICKS_PER_SECOND, 3)),
-                Color.GRAY,
-                List.of("Slows the target by 60% for 8s", "Number of Charges: 2", "Cooldown: 15s"),
+                "Poison Dart",
+                List.of(new PotionEffect(PotionEffectType.WITHER, 10 * Constants.TICKS_PER_SECOND, 0)),
+                Color.BLACK,
+                List.of("Deals 5 wither damage to the target over 10s", "Number of Charges: 2", "Cooldown: 30s"),
                 2
             ),
-            15,
+            30,
             2
         );
     }

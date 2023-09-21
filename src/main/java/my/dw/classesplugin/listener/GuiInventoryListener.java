@@ -1,44 +1,32 @@
 package my.dw.classesplugin.listener;
 
-import my.dw.classesplugin.exception.ClassAlreadyEquippedException;
-import my.dw.classesplugin.model.Class;
-import my.dw.classesplugin.ui.SelectClassGui;
+import my.dw.classesplugin.ui.InventoryGui;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import java.util.Objects;
-
-import static my.dw.classesplugin.ui.SelectClassGui.DISPLAY_ITEM_TO_CLASS_NAME;
+import static my.dw.classesplugin.utils.GuiUtils.INVENTORY_TO_GUI;
 
 public class GuiInventoryListener implements Listener {
 
     @EventHandler
     public void onInventoryClickEvent(final InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player) || Objects.isNull(event.getCurrentItem())) {
+        if (!isInventoryGuiEvent(event)) {
             return;
         }
 
-        if (event.getView().getTitle().equalsIgnoreCase(SelectClassGui.GUI_NAME)) {
+        final InventoryGui gui = INVENTORY_TO_GUI.get(event.getClickedInventory());
+        if (gui.handleOnInventoryClickEvent(event)) {
             event.setCancelled(true);
-            final Player player = (Player) event.getWhoClicked();
-            final String className = DISPLAY_ITEM_TO_CLASS_NAME.get(event.getCurrentItem());
-
-            if (Objects.isNull(className)) {
-                player.sendMessage("This GUI item does not have an associated class to equip");
-                return;
-            }
-
-            try {
-                Class.valueOf(className).equipClass(player);
-                player.closeInventory();
-            } catch (final IllegalArgumentException e) {
-                player.sendMessage("Provided classname " + className + " is not a valid classname");
-            } catch (final ClassAlreadyEquippedException e) {
-                player.sendMessage(e.getMessage());
-            }
         }
+    }
+
+    private boolean isInventoryGuiEvent(final InventoryClickEvent event) {
+        return event.getWhoClicked() instanceof Player
+            && event.getClickedInventory() != null
+            && INVENTORY_TO_GUI.containsKey(event.getClickedInventory())
+            && event.getCurrentItem() != null;
     }
 
 }

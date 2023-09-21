@@ -9,6 +9,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,26 +21,26 @@ public class JuggernautArmorAbility extends PassiveAbility {
 
     private final PotionEffect slowEffect;
 
-    private final Map<Player, Location> playerToLastRecordedLocation;
+    private final Map<Player, Location> playerToLocation;
 
     public JuggernautArmorAbility() {
         super("Made Like a Tree");
         this.resistanceEffect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, (int) (0.9 * Constants.TICKS_PER_SECOND), 0);
         this.slowEffect = new PotionEffect(PotionEffectType.SLOW, INFINITE_DURATION, 0, false, false);
-        this.playerToLastRecordedLocation = new HashMap<>();
+        this.playerToLocation = new HashMap<>();
 
         final BukkitRunnable task = new BukkitRunnable() {
-            private static final double distanceThreshold = 0.15;
+            private static final double threshold = 0.15;
 
             @Override
             public void run() {
-                for (Player player: playerToLastRecordedLocation.keySet()) {
-                    if (Math.abs(player.getLocation().getX() - playerToLastRecordedLocation.get(player).getX()) <= distanceThreshold
-                        && Math.abs(player.getLocation().getY() - playerToLastRecordedLocation.get(player).getY()) <= distanceThreshold
-                        && Math.abs(player.getLocation().getZ() - playerToLastRecordedLocation.get(player).getZ()) <= distanceThreshold) {
+                for (Player player: playerToLocation.keySet()) {
+                    if (Math.abs(player.getLocation().getX() - playerToLocation.get(player).getX()) <= threshold
+                        && Math.abs(player.getLocation().getY() - playerToLocation.get(player).getY()) <= threshold
+                        && Math.abs(player.getLocation().getZ() - playerToLocation.get(player).getZ()) <= threshold) {
                         player.addPotionEffect(resistanceEffect);
                     }
-                    playerToLastRecordedLocation.put(player, player.getLocation());
+                    playerToLocation.put(player, player.getLocation());
                 }
             }
         };
@@ -49,13 +50,16 @@ public class JuggernautArmorAbility extends PassiveAbility {
     @Override
     public void initialize(final Player player) {
         player.addPotionEffect(slowEffect);
-        playerToLastRecordedLocation.put(player, player.getLocation());
+        playerToLocation.put(player, player.getLocation());
     }
 
     @Override
     public void terminate(final Player player) {
-        player.removePotionEffect(slowEffect.getType());
-        playerToLastRecordedLocation.remove(player);
+        final Collection<PotionEffect> currentEffects = player.getActivePotionEffects();
+        currentEffects.remove(slowEffect);
+        player.getActivePotionEffects().forEach(p -> player.removePotionEffect(p.getType()));
+        player.addPotionEffects(currentEffects);
+        playerToLocation.remove(player);
     }
 
 }

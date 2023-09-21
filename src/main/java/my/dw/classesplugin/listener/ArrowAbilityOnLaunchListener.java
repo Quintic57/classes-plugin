@@ -13,8 +13,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
-import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
-
 public class ArrowAbilityOnLaunchListener implements Listener {
 
     @EventHandler
@@ -37,16 +35,18 @@ public class ArrowAbilityOnLaunchListener implements Listener {
         final ArrowAbility ability
             = AbilityUtils.ARROW_TRIGGER_TO_ARROW_ABILITY.get(ItemStackKey.from(arrowTrigger));
 
+        // Check that the player has the correct character class metadata tag before attempting to resolve the ability
         if (!Class.isClassEquipped(player, AbilityUtils.ABILITY_TO_CLASS_NAME.get(ability))) {
             return;
         }
 
         if (ability.isAbilityOnCooldown(player.getUniqueId())) {
-            player.sendMessage(ability.getName()
+            player.sendMessage(
+                ability.getName()
                 + " is on cooldown. Remaining CD: "
-                + String.format("%.2f", ability.getCooldown() - (durationElapsedSinceInstant(
-                    ability.getLastAbilityInstant(player.getUniqueId())).toMillis() / 1000.0))
-                + " seconds");
+                + String.format("%.2f", ability.getRemainingCooldown(player.getUniqueId()))
+                + " seconds"
+            );
 
             AbilityUtils.removeItemsFromPlayer(player.getInventory(), arrowTrigger);
             player.getInventory().addItem(arrowTrigger);

@@ -11,10 +11,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.Instant;
 import java.util.Objects;
-
-import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
 
 public class ActiveAbilityListener implements Listener {
 
@@ -42,20 +39,17 @@ public class ActiveAbilityListener implements Listener {
         }
 
         if (ability.isAbilityOnCooldown(player.getUniqueId())) {
-            final int cooldown = ability.getCooldown(player.getUniqueId());
-            player.sendMessage(ability.getName()
+            player.sendMessage(
+                ability.getName()
                 + " is on cooldown. Remaining CD: "
-                + String.format("%.2f", (long) cooldown - (durationElapsedSinceInstant(
-                    ability.getLastAbilityInstant(player.getUniqueId())).toMillis() / 1000.0))
-                + " seconds");
+                + String.format("%.2f", ability.getRemainingCooldown(player.getUniqueId()))
+                + " seconds"
+            );
             event.setCancelled(true);
             return;
         }
 
-        final boolean activated = ability.handleAbility(player, itemTrigger);
-        if (activated) {
-            ability.setLastAbilityInstant(player.getUniqueId(), Instant.now());
-        }
+        ability.handleAbility(player, itemTrigger);
     }
 
 }

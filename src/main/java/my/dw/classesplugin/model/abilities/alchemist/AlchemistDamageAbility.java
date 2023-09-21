@@ -14,11 +14,11 @@ public class AlchemistDamageAbility extends ActiveThrowableAbility {
 
     public AlchemistDamageAbility() {
         super(
-            "Expunge",
+            "Rubedo",
             generatePotionMetaTrigger(
                 Material.SPLASH_POTION,
-                "Expunge",
-                List.of(new PotionEffect(PotionEffectType.HARM, 1, 1)),
+                "Rubedo",
+                List.of(new PotionEffect(PotionEffectType.HARM, 1, 0)),
                 Color.MAROON,
                 List.of("Deals 6 potion damage in a small AOE", "Number of Charges: 3", "Cooldown: 10s"),
                 3

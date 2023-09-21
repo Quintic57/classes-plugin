@@ -1,6 +1,6 @@
 package my.dw.classesplugin.model.abilities;
 
-public abstract class PassiveAbility implements Ability, InitializedAbility {
+public abstract class PassiveAbility implements Ability {
 
     protected final String name;
 

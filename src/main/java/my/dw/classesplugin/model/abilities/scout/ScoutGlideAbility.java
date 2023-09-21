@@ -1,9 +1,11 @@
 package my.dw.classesplugin.model.abilities.scout;
 
+import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
+import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
+
 import my.dw.classesplugin.ClassesPlugin;
 import my.dw.classesplugin.model.Class;
 import my.dw.classesplugin.model.abilities.ActiveDynamicAbility;
-import my.dw.classesplugin.model.abilities.InitializedAbility;
 import my.dw.classesplugin.model.abilities.ListenedAbility;
 import my.dw.classesplugin.utils.AbilityUtils;
 import my.dw.classesplugin.utils.Constants;
@@ -23,10 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
-import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
-
-public class ScoutGlideAbility extends ActiveDynamicAbility implements InitializedAbility, ListenedAbility {
+public class ScoutGlideAbility extends ActiveDynamicAbility implements ListenedAbility {
 
     private final Map<UUID, Set<BukkitRunnable>> playerToAbilityTasks;
 
@@ -36,8 +35,10 @@ public class ScoutGlideAbility extends ActiveDynamicAbility implements Initializ
             generateItemMetaTrigger(
                 Material.ELYTRA,
                 "Para-glider",
-                List.of("Allows the user to glide through the air",
-                    "Cooldown: dynamically increases based on flight duration, to a max of 120s"),
+                List.of(
+                    "Allows the user to glide through the air for a max of 20s",
+                    "Cooldown: Max 180s, increases based on flight duration"
+                ),
                 List.of(ItemFlag.HIDE_ATTRIBUTES)
             ),
             20,
@@ -47,8 +48,8 @@ public class ScoutGlideAbility extends ActiveDynamicAbility implements Initializ
     }
 
     @Override
-    public boolean handleAbility(final Player player, ItemStack itemTrigger) {
-        return false; // ability logic is handled inherently by the elytra item functionality
+    public void handleAbility(final Player player, final ItemStack itemTrigger) {
+        // ability logic is handled inherently by the elytra item functionality
     }
 
     @Override
@@ -66,11 +67,13 @@ public class ScoutGlideAbility extends ActiveDynamicAbility implements Initializ
         final Player player = (Player) entityToggleGlideEvent.getEntity();
         // Since player can manually equip glider, have to check cooldown again when handling gliding event.
         if (isAbilityOnCooldown(player.getUniqueId())) {
-            player.sendMessage(this.name
+            player.sendMessage(
+                getName()
                 + " is on cooldown. Remaining CD: "
-                + String.format("%.2f", (long) playerToDynamicCooldown.get(player.getUniqueId())
-                    - (durationElapsedSinceInstant(playerToLastAbilityInstant.get(player.getUniqueId())).toMillis() / 1000.0))
-                + " seconds");
+                + String.format("%.2f", getRemainingCooldown(player.getUniqueId()))
+                + " seconds"
+            );
+            resetChestArmor(player.getInventory());
             entityToggleGlideEvent.setCancelled(true);
             return false;
         }
@@ -97,24 +100,22 @@ public class ScoutGlideAbility extends ActiveDynamicAbility implements Initializ
                     inventory.setChestplate(null);
                 }
             };
-            messageTask.runTaskLater(ClassesPlugin.getPlugin(), (long) (this.duration - 5) * Constants.TICKS_PER_SECOND);
-            equipArmorTask.runTaskLater(ClassesPlugin.getPlugin(), (long) this.duration * Constants.TICKS_PER_SECOND);
+            messageTask.runTaskLater(ClassesPlugin.getPlugin(), (long) (getDuration() - 5) * Constants.TICKS_PER_SECOND);
+            equipArmorTask.runTaskLater(ClassesPlugin.getPlugin(), (long) getDuration() * Constants.TICKS_PER_SECOND);
             playerToAbilityTasks.put(player.getUniqueId(), Set.of(messageTask, equipArmorTask));
-            playerToDynamicCooldown.put(player.getUniqueId(), 0);
+            setDynamicCooldown(player.getUniqueId(), 0);
         } else {
-            AbilityUtils.removeItemsFromPlayer(player.getInventory(), Class.SCOUT.getArmor().getChestplate(), itemTrigger);
-            inventory.setChestplate(Class.SCOUT.getArmor().getChestplate());
-            inventory.addItem(itemTrigger);
-
-            playerToDynamicCooldown.put(player.getUniqueId(), calculateDynamicCooldown(durationElapsedSinceInstant(
-                playerToLastAbilityInstant.get(player.getUniqueId())).getSeconds()));
-            if (playerToAbilityTasks.containsKey(player.getUniqueId())) {
-                playerToAbilityTasks.get(player.getUniqueId()).forEach(BukkitRunnable::cancel);
-                playerToAbilityTasks.remove(player.getUniqueId());
+            resetChestArmor(inventory);
+            if (!playerToAbilityTasks.containsKey(player.getUniqueId())) {
+                return;
             }
+            playerToAbilityTasks.get(player.getUniqueId()).forEach(BukkitRunnable::cancel);
+            playerToAbilityTasks.remove(player.getUniqueId());
+            setDynamicCooldown(player.getUniqueId(), calculateDynamicCooldown(durationElapsedSinceInstant(
+                getLastAbilityInstant(player.getUniqueId())).getSeconds()));
         }
 
-        this.playerToLastAbilityInstant.put(player.getUniqueId(), Instant.now());
+        setLastAbilityInstant(player.getUniqueId(), Instant.now());
     }
 
     @Override
@@ -131,16 +132,10 @@ public class ScoutGlideAbility extends ActiveDynamicAbility implements Initializ
         return (int) Math.ceil(abilityDuration) * cooldownMultiplier;
     }
 
-    @Override
-    public void initialize(final Player player) {
-        playerToLastAbilityInstant.put(player.getUniqueId(), Instant.now());
-        playerToDynamicCooldown.put(player.getUniqueId(), 0);
-    }
-
-    @Override
-    public void terminate(final Player player) {
-        playerToLastAbilityInstant.remove(player.getUniqueId());
-        playerToDynamicCooldown.remove(player.getUniqueId());
+    private void resetChestArmor(final PlayerInventory inventory) {
+        AbilityUtils.removeItemsFromPlayer(inventory, Class.SCOUT.getArmor().getChestplate(), getItemTrigger());
+        inventory.setChestplate(Class.SCOUT.getArmor().getChestplate());
+        inventory.addItem(getItemTrigger());
     }
 
 }

@@ -21,7 +21,7 @@ public class ArcherPoisonAbility extends ArrowAbility {
                 "Poison Tipped Arrow",
                 List.of(new PotionEffect(PotionEffectType.POISON, 10 * Constants.TICKS_PER_SECOND, 0)),
                 Color.GREEN,
-                List.of("Deals 8 potion damage to the target over 10s", "Cooldown: 10s"),
+                List.of("Deals 8 poison damage to the target over 10s", "Number of Charges: 3", "Cooldown: 10s"),
                 3
             ),
             10,

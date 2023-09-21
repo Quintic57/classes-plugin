@@ -24,7 +24,7 @@ public class AssassinSmokeAbility extends ActiveThrowableAbility {
                 List.of(new PotionEffect(PotionEffectType.BLINDNESS, 5 * Constants.TICKS_PER_SECOND, 0)),
                 Color.BLACK,
                 List.of("Creates a large smoke screen for 15s that continuously blinds entities in its AOE",
-                    "Charge Refresh: 30s")
+                    "Cooldown: 30s")
             ),
             0,
             30

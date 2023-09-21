@@ -44,6 +44,8 @@ public class AbilityUtils {
         ABILITY_TO_CLASS_NAME = new HashMap<>();
         Arrays.stream(Class.values())
             .forEach(c -> c.getAbilities().forEach(a -> ABILITY_TO_CLASS_NAME.put(a, c.name())));
+        // TODO: Should prob introduce a way to statically define order, that way multiple events get executed in the
+        //  correct order i.e. an Assassin hitting a Swordsman that's blocking
         LISTENED_ABILITIES = Arrays.stream(Class.values())
             .flatMap(c -> c.getAbilities().stream())
             .filter(a -> a instanceof ListenedAbility)
@@ -68,7 +70,8 @@ public class AbilityUtils {
         final ItemStack itemTrigger = new ItemStack(material);
         final ItemMeta itemMeta = itemTrigger.getItemMeta();
         itemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
-        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        itemMeta.setUnbreakable(true);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
         itemMeta.setDisplayName(displayName);
         itemMeta.setLore(lore);
         itemFlags.forEach(itemMeta::addItemFlags);
@@ -113,7 +116,7 @@ public class AbilityUtils {
         effects.forEach(e -> itemMeta.addCustomEffect(e, false));
         itemMeta.setColor(color);
         itemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
-        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
         itemMeta.setDisplayName(displayName);
         itemMeta.setLore(lore);
         itemFlags.forEach(itemMeta::addItemFlags);
@@ -132,7 +135,7 @@ public class AbilityUtils {
     }
 
     public static void removeItemsFromPlayer(final PlayerInventory inventory, final ItemStack... items) {
-        for (ItemStack item: items) {
+        for (final ItemStack item: items) {
             if (inventory.getItemInOffHand().equals(item)) {
                 inventory.setItemInOffHand(null);
                 break;

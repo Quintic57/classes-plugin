@@ -4,6 +4,7 @@ import my.dw.classesplugin.model.abilities.ActiveThrowableAbility;
 import my.dw.classesplugin.utils.Constants;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -15,22 +16,20 @@ public class AlchemistPoisonAbility extends ActiveThrowableAbility {
 
     public AlchemistPoisonAbility() {
         super(
-            "Poison Cloud",
+            "Albedo",
             generatePotionMetaTrigger(
                 Material.LINGERING_POTION,
-                "Poison Cloud",
+                "Albedo",
                 List.of(
                     new PotionEffect(PotionEffectType.POISON, 5 * Constants.TICKS_PER_SECOND, 1),
                     new PotionEffect(PotionEffectType.SLOW, 5 * Constants.TICKS_PER_SECOND, 0),
                     new PotionEffect(PotionEffectType.CONFUSION, 8 * Constants.TICKS_PER_SECOND, 0)
                 ),
-                Color.GREEN,
-                List.of("Continuously disorients and poisons in a large AOE", "Number of Charges: 2", "Cooldown: 15s"),
-                2
+                Color.WHITE,
+                List.of("Continuously disorients and poisons in a large AOE", "Number of Charges: 1", "Cooldown: 15s")
             ),
             0,
-            15,
-            2
+            15
         );
     }
 

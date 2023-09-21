@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Collection;
+
 import static org.bukkit.potion.PotionEffect.INFINITE_DURATION;
 
 public class AssassinArmorAbility extends PassiveAbility {
@@ -23,7 +25,10 @@ public class AssassinArmorAbility extends PassiveAbility {
 
     @Override
     public void terminate(final Player player) {
-        player.removePotionEffect(effect.getType());
+        final Collection<PotionEffect> currentEffects = player.getActivePotionEffects();
+        currentEffects.remove(effect);
+        player.getActivePotionEffects().forEach(p -> player.removePotionEffect(p.getType()));
+        player.addPotionEffects(currentEffects);
     }
 
 }

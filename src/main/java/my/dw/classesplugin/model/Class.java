@@ -5,8 +5,6 @@ import my.dw.classesplugin.exception.ClassAlreadyEquippedException;
 import my.dw.classesplugin.model.abilities.Ability;
 import my.dw.classesplugin.model.abilities.ActiveAbility;
 import my.dw.classesplugin.model.abilities.ArrowAbility;
-import my.dw.classesplugin.model.abilities.InitializedAbility;
-import my.dw.classesplugin.model.abilities.PassiveAbility;
 import my.dw.classesplugin.model.abilities.alchemist.AlchemistDamageAbility;
 import my.dw.classesplugin.model.abilities.alchemist.AlchemistDisAbility;
 import my.dw.classesplugin.model.abilities.alchemist.AlchemistPoisonAbility;
@@ -16,6 +14,7 @@ import my.dw.classesplugin.model.abilities.archer.ArcherPoisonAbility;
 import my.dw.classesplugin.model.abilities.archer.ArcherReconAbility;
 import my.dw.classesplugin.model.abilities.assassin.AssassinArmorAbility;
 import my.dw.classesplugin.model.abilities.assassin.AssassinCloakAbility;
+import my.dw.classesplugin.model.abilities.assassin.AssassinPoisonAbility;
 import my.dw.classesplugin.model.abilities.assassin.AssassinSmokeAbility;
 import my.dw.classesplugin.model.abilities.assassin.AssassinSmokeArrowAbility;
 import my.dw.classesplugin.model.abilities.assassin.AssassinTeleportAbility;
@@ -28,18 +27,13 @@ import my.dw.classesplugin.model.abilities.scout.ScoutManeuverAbility;
 import my.dw.classesplugin.model.abilities.summoner.SummonerLightningAbility;
 import my.dw.classesplugin.model.abilities.swordsman.SwordsmanFrenzyAbility;
 import my.dw.classesplugin.model.abilities.swordsman.SwordsmanShieldAbility;
-import my.dw.classesplugin.utils.Constants;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,13 +67,13 @@ public enum Class {
             final List<ItemStack> inventory = new ArrayList<>();
 
             // Weapon
-            inventory.add(this.weapon.getWeaponItemStack());
+            inventory.add(weapon.getWeaponItemStack());
             // Active Ability Triggers
-            this.getActiveAbilities().forEach(a -> inventory.add(a.getItemTrigger()));
+            getActiveAbilities().forEach(a -> inventory.add(a.getItemTrigger()));
             // Arrow - By design, this makes it so the standard arrow is chosen by default when shooting
             inventory.add(new ItemStack(Material.ARROW));
             // Arrow Ability Triggers
-            this.getArrowAbilities().forEach(a -> inventory.add(a.getArrowTrigger()));
+            getArrowAbilities().forEach(a -> inventory.add(a.getArrowTrigger()));
 
             return inventory;
         }
@@ -90,6 +84,7 @@ public enum Class {
         List.of(
             new AssassinCloakAbility(),
             new AssassinSmokeAbility(),
+            new AssassinPoisonAbility(),
             new AssassinSmokeArrowAbility(),
             new AssassinTeleportAbility(),
             new AssassinArmorAbility()
@@ -97,23 +92,20 @@ public enum Class {
     ) {
         @Override
         public List<ItemStack> getInventory() {
-            final List<ItemStack> inventory = defaultInventory();
+            final List<ItemStack> inventory = new ArrayList<>();
 
+            // Weapon
+            inventory.add(weapon.getWeaponItemStack());
+            // Active Ability Triggers
+            getActiveAbilities().forEach(a -> inventory.add(a.getItemTrigger()));
             // Crossbow
             final ItemStack crossbow = new ItemStack(Material.CROSSBOW);
             final ItemMeta crossbowMeta = crossbow.getItemMeta();
             crossbowMeta.setUnbreakable(true);
             crossbow.setItemMeta(crossbowMeta);
             inventory.add(crossbow);
-            // Crossbow Bolts
-            final ItemStack crossbowBolts = new ItemStack(Material.TIPPED_ARROW, 3);
-            final PotionMeta crossbowBoltsMeta = (PotionMeta) crossbowBolts.getItemMeta();
-            crossbowBoltsMeta.addCustomEffect(
-                new PotionEffect(PotionEffectType.POISON, 10 * Constants.TICKS_PER_SECOND, 0), false);
-            crossbowBoltsMeta.setColor(Color.GREEN);
-            crossbowBoltsMeta.setDisplayName("Arrow of Poison");
-            crossbowBolts.setItemMeta(crossbowBoltsMeta);
-            inventory.add(crossbowBolts);
+            // Arrow Ability Triggers
+            getArrowAbilities().forEach(a -> inventory.add(a.getArrowTrigger()));
 
             return inventory;
         }
@@ -163,13 +155,13 @@ public enum Class {
             final List<ItemStack> inventory = new ArrayList<>();
 
             // Weapon
-            inventory.add(this.weapon.getWeaponItemStack());
+            inventory.add(weapon.getWeaponItemStack());
             // Active Ability Triggers
-            this.getActiveAbilities().forEach(a -> inventory.add(a.getItemTrigger()));
+            getActiveAbilities().forEach(a -> inventory.add(a.getItemTrigger()));
             // Arrow - By design, this makes it so the standard arrow is chosen by default when shooting
             inventory.add(new ItemStack(Material.ARROW));
             // Arrow Ability Triggers
-            this.getArrowAbilities().forEach(a -> inventory.add(a.getArrowTrigger()));
+            getArrowAbilities().forEach(a -> inventory.add(a.getArrowTrigger()));
 
             return inventory;
         }
@@ -177,7 +169,8 @@ public enum Class {
     SPECIALIST(
         Weapon.SPECIALIST,
         Armor.SPECIALIST,
-        List.of()
+        List.of(),
+        false
     ) {
         @Override
         public List<ItemStack> getInventory() {
@@ -187,7 +180,8 @@ public enum Class {
     SUMMONER(
         Weapon.SUMMONER,
         Armor.SUMMONER,
-        List.of(new SummonerLightningAbility())
+        List.of(new SummonerLightningAbility()),
+        false
     ) {
         @Override
         public List<ItemStack> getInventory() {
@@ -201,30 +195,31 @@ public enum Class {
     ) {
         @Override
         public List<ItemStack> getInventory() {
-            final List<ItemStack> inventory = defaultInventory();
-
-            final ItemStack shield = new ItemStack(Material.SHIELD);
-            final ItemMeta shieldMeta = shield.getItemMeta();
-            shieldMeta.setUnbreakable(true);
-            shield.setItemMeta(shieldMeta);
-            inventory.add(shield);
-
-            return inventory;
+            return defaultInventory();
         }
     };
+
+    public static final String CLASS_METADATA_KEY = "character_class";
 
     final Weapon weapon;
     final Armor armor;
     private final List<Ability> abilities;
-
-    public static final String CLASS_METADATA_KEY = "character_class";
+    private final boolean active;
 
     Class(final Weapon weapon,
           final Armor armor,
           final List<Ability> abilities) {
+        this(weapon, armor, abilities, true);
+    }
+
+    Class(final Weapon weapon,
+          final Armor armor,
+          final List<Ability> abilities,
+          final boolean active) {
         this.weapon = weapon;
         this.armor = armor;
         this.abilities = abilities;
+        this.active = active;
     }
 
     public Weapon getWeapon() {
@@ -239,17 +234,21 @@ public enum Class {
         return abilities;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
     public abstract List<ItemStack> getInventory();
 
     List<ItemStack> defaultInventory() {
         final List<ItemStack> inventory = new ArrayList<>();
 
         // Weapon
-        inventory.add(this.weapon.getWeaponItemStack());
+        inventory.add(weapon.getWeaponItemStack());
         // Active Ability Triggers
-        this.getActiveAbilities().forEach(a -> inventory.add(a.getItemTrigger()));
+        getActiveAbilities().forEach(a -> inventory.add(a.getItemTrigger()));
         // Arrow Ability Triggers
-        this.getArrowAbilities().forEach(a -> inventory.add(a.getArrowTrigger()));
+        getArrowAbilities().forEach(a -> inventory.add(a.getArrowTrigger()));
 
         return inventory;
     }
@@ -268,56 +267,39 @@ public enum Class {
             .collect(Collectors.toList());
     }
 
-    public List<PassiveAbility> getPassiveAbilities() {
-        return abilities.stream()
-            .filter(a -> a instanceof PassiveAbility)
-            .map(a -> (PassiveAbility) a)
-            .collect(Collectors.toList());
-    }
-
-    private List<InitializedAbility> getInitializedAbilities() {
-        return abilities.stream()
-            .filter(a -> a instanceof InitializedAbility)
-            .map(a -> (InitializedAbility) a)
-            .collect(Collectors.toList());
-    }
-
     public void equipClass(final Player player) throws ClassAlreadyEquippedException {
         if (isClassEquipped(player)) {
             final String className = player.getMetadata(CLASS_METADATA_KEY).get(0).asString();
-            if (className.equals(this.name())) {
+            if (className.equals(name())) {
                 throw new ClassAlreadyEquippedException();
             }
-
             Class.valueOf(className).unequipClass(player);
         } else {
             player.getInventory().clear();
-            player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
         }
 
         player.setMetadata(CLASS_METADATA_KEY,
-            new FixedMetadataValue(ClassesPlugin.getPlugin(), this.name()));
+            new FixedMetadataValue(ClassesPlugin.getPlugin(), name()));
 
         final PlayerInventory playerInventory = player.getInventory();
         // Armor
-        playerInventory.setItem(EquipmentSlot.HEAD, this.armor.getHelmet());
-        playerInventory.setItem(EquipmentSlot.CHEST, this.armor.getChestplate());
-        playerInventory.setItem(EquipmentSlot.LEGS, this.armor.getLeggings());
-        playerInventory.setItem(EquipmentSlot.FEET, this.armor.getBoots());
+        playerInventory.setItem(EquipmentSlot.HEAD, armor.getHelmet());
+        playerInventory.setItem(EquipmentSlot.CHEST, armor.getChestplate());
+        playerInventory.setItem(EquipmentSlot.LEGS, armor.getLeggings());
+        playerInventory.setItem(EquipmentSlot.FEET, armor.getBoots());
         // Inventory
-        this.getInventory().forEach(playerInventory::addItem);
-        // Initialized Abilities
-        for (InitializedAbility a: this.getInitializedAbilities()) {
+        getInventory().forEach(playerInventory::addItem);
+        // Initialize Abilities
+        for (final Ability a: abilities) {
             a.initialize(player);
         }
     }
 
     public void unequipClass(final Player player) {
+        // TODO: If there's an expanded inventory you have to change this to remove only the items related to the class
         player.getInventory().clear();
-        player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
-
-        // Initialized Abilities
-        for (InitializedAbility a: this.getInitializedAbilities()) {
+        // Terminate Abilities
+        for (final Ability a: abilities) {
             a.terminate(player);
         }
         player.removeMetadata(CLASS_METADATA_KEY, ClassesPlugin.getPlugin());

@@ -41,7 +41,7 @@ public class ArcherExplosiveAbility extends ArrowAbility {
             generateItemMetaTrigger(
                 Material.ARROW,
                 "Explosive Tipped Arrow",
-                List.of("Deals AOE explosive damage based on distance traveled", "Cooldown: 30s"),
+                List.of("Deals AOE explosive damage based on distance traveled", "Number of Charges: 1", "Cooldown: 30s"),
                 List.of(ItemFlag.HIDE_POTION_EFFECTS)
             ),
             1 // TODO: Change this back once you've had your fun
@@ -108,12 +108,9 @@ public class ArcherExplosiveAbility extends ArrowAbility {
             super.onProjectileHit(event);
             return;
         }
-        final float explosionPower;
-        if (initialShotLocation.distance(arrow.getLocation()) < LEVEL_2_PRIMING_DISTANCE) {
-            explosionPower = TNT_EXPLOSION_POWER - 1F;
-        } else {
-            explosionPower = TNT_EXPLOSION_POWER;
-        }
+        final float explosionPower = initialShotLocation.distance(arrow.getLocation()) < LEVEL_2_PRIMING_DISTANCE
+            ? TNT_EXPLOSION_POWER - 1F
+            : TNT_EXPLOSION_POWER;
         final Location explosionLocation = Objects.isNull(event.getHitBlock())
             ? arrow.getLocation()
             : event.getHitBlock().getLocation().add(0, 1, 0);

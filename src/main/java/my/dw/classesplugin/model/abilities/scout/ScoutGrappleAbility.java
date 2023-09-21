@@ -34,10 +34,10 @@ public class ScoutGrappleAbility extends ArrowAbility {
             generateItemMetaTrigger(
                 Material.ARROW,
                 "Grapple Hook",
-                List.of("Teleports the user to the arrow's terminus. Can only be used to travel up", "Cooldown: 30s"),
+                List.of("Can only be used to travel up.", "Teleports the user to the arrow's terminus", "Cooldown: 30s"),
                 List.of(ItemFlag.HIDE_POTION_EFFECTS)
             ),
-            1 // TODO: Change back
+            15 // TODO: Change back
         );
     }
 
@@ -62,19 +62,17 @@ public class ScoutGrappleAbility extends ArrowAbility {
             return;
         }
 
-        final Location initialShotLocation = (Location) arrow.getMetadata(INITIAL_SHOT_LOCATION_METADATA_KEY).get(0).value();
+        final Location initialShot = (Location) arrow.getMetadata(INITIAL_SHOT_LOCATION_METADATA_KEY).get(0).value();
         final Location arrowTerminus = event.getHitBlock().getLocation();
         super.onProjectileHit(event);
 
-        if (initialShotLocation.getY() >= arrowTerminus.getY()) { //TODO: Is this a necessary restriction?
-            shooter.sendMessage("The grappling hook can only be used to travel up");
-            this.playerToLastAbilityInstant.put(shooter.getUniqueId(), Instant.now().minus(this.cooldown, ChronoUnit.SECONDS));
+        if (initialShot.getY() >= arrowTerminus.getY()) {
+            resetShotCooldownAndNotify(shooter, "The grappling hook can only be used to travel up");
             return;
-        } else if (Math.hypot(initialShotLocation.getX() - arrowTerminus.getX(),
-                initialShotLocation.getZ() - arrowTerminus.getZ()) > MAX_HORIZONTAL_DISTANCE
-            || Math.abs(initialShotLocation.getY() - arrowTerminus.getY()) > MAX_VERTICAL_DISTANCE) {
-            shooter.sendMessage("The grappling hook terminus is too far away from your location");
-            this.playerToLastAbilityInstant.put(shooter.getUniqueId(), Instant.now().minus(this.cooldown, ChronoUnit.SECONDS));
+        } else if (Math.hypot(initialShot.getX() - arrowTerminus.getX(),
+                initialShot.getZ() - arrowTerminus.getZ()) > MAX_HORIZONTAL_DISTANCE
+            || Math.abs(initialShot.getY() - arrowTerminus.getY()) > MAX_VERTICAL_DISTANCE) {
+            resetShotCooldownAndNotify(shooter, "The grappling hook terminus is too far away from your location");
             return;
         }
 
@@ -84,12 +82,10 @@ public class ScoutGrappleAbility extends ArrowAbility {
             distanceFromAirBlock++;
         }
         if (distanceFromAirBlock > MAX_DISTANCE_FROM_AIR_BLOCK) {
-            shooter.sendMessage("The grappling hook terminus is too far away from a safe grapple point");
-            this.playerToLastAbilityInstant.put(shooter.getUniqueId(), Instant.now().minus(this.cooldown, ChronoUnit.SECONDS));
+            resetShotCooldownAndNotify(shooter, "The grappling hook terminus is too far away from a safe grapple point");
             return;
         } else if (!arrow.getWorld().getBlockAt(arrowTerminus.clone().add(0, distanceFromAirBlock + 1, 0)).isEmpty()) {
-            shooter.sendMessage("There is no free space to grapple up to");
-            this.playerToLastAbilityInstant.put(shooter.getUniqueId(), Instant.now().minus(this.cooldown, ChronoUnit.SECONDS));
+            resetShotCooldownAndNotify(shooter, "There is no free space to grapple up to");
             return;
         }
 
@@ -103,6 +99,13 @@ public class ScoutGrappleAbility extends ArrowAbility {
                 shooter.getLocation().getPitch()
             )
         );
+    }
+
+    private void resetShotCooldownAndNotify(final Player shooter, final String message) {
+        setChargeCount(shooter.getUniqueId(), getMaxCharges());
+        cancelAndRemoveIncrementChargeTask(shooter.getUniqueId());
+        setLastAbilityRefresh(shooter.getUniqueId(), Instant.now().minus(getCooldown(), ChronoUnit.SECONDS));
+        shooter.sendMessage(message);
     }
 
 }

@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Collection;
+
 import static org.bukkit.potion.PotionEffect.INFINITE_DURATION;
 
 public class ScoutManeuverAbility extends PassiveAbility {
@@ -13,7 +15,7 @@ public class ScoutManeuverAbility extends PassiveAbility {
 
     public ScoutManeuverAbility() {
         super("Travel Lightly");
-        this.effect = new PotionEffect(PotionEffectType.SPEED, INFINITE_DURATION, 0);
+        this.effect = new PotionEffect(PotionEffectType.SPEED, INFINITE_DURATION, 0, false, false);
     }
 
     @Override
@@ -23,6 +25,10 @@ public class ScoutManeuverAbility extends PassiveAbility {
 
     @Override
     public void terminate(final Player player) {
-        player.removePotionEffect(effect.getType());
+        final Collection<PotionEffect> currentEffects = player.getActivePotionEffects();
+        currentEffects.remove(effect);
+        player.getActivePotionEffects().forEach(p -> player.removePotionEffect(p.getType()));
+        player.addPotionEffects(currentEffects);
     }
+
 }

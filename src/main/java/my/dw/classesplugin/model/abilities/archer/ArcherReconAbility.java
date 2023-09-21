@@ -23,9 +23,9 @@ import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
 
 public class ArcherReconAbility extends ArrowAbility {
 
-    private final PotionEffect effect;
-
     private static final double CUBE_LENGTH = 20;
+
+    private final PotionEffect effect;
 
     public ArcherReconAbility() {
         super(
@@ -33,7 +33,11 @@ public class ArcherReconAbility extends ArrowAbility {
             generateItemMetaTrigger(
                 Material.SPECTRAL_ARROW,
                 "Recon Arrow",
-                List.of("Highlights all entities in a 10-block radius of the arrow's terminus", "Cooldown: 30s")
+                List.of(
+                    "Highlights all entities in a 10-block radius of the arrow's terminus",
+                    "Number of Charges: 1",
+                    "Cooldown: 30s"
+                )
             ),
             30
         );

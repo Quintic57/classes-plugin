@@ -1,5 +1,7 @@
 package my.dw.classesplugin.model.abilities;
 
+import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
+
 import my.dw.classesplugin.ClassesPlugin;
 import my.dw.classesplugin.utils.AbilityUtils;
 import my.dw.classesplugin.utils.Constants;
@@ -16,14 +18,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public abstract class ArrowAbility implements Ability, InitializedAbility {
+public abstract class ArrowAbility implements Ability {
 
     public static final String ARROW_METADATA_KEY = "arrow_ability_name";
 
     private final String name;
     private final ItemStack arrowTrigger;
-    protected final int cooldown;
-    protected final Map<UUID, Instant> playerToLastAbilityInstant;
+    private final int cooldown;
+    private final Map<UUID, Instant> playerToLastAbilityRefresh;
     private final int maxCharges;
     private final Map<UUID, BukkitRunnable> playerToIncrementChargeTask;
     private final Map<UUID, Integer> playerToChargeCount;
@@ -41,7 +43,7 @@ public abstract class ArrowAbility implements Ability, InitializedAbility {
         this.name = name;
         this.arrowTrigger = arrowTrigger;
         this.cooldown = cooldown;
-        this.playerToLastAbilityInstant = new HashMap<>();
+        this.playerToLastAbilityRefresh = new HashMap<>();
         this.maxCharges = maxCharges;
         this.playerToIncrementChargeTask = new HashMap<>();
         this.playerToChargeCount = new HashMap<>();
@@ -55,20 +57,36 @@ public abstract class ArrowAbility implements Ability, InitializedAbility {
         return arrowTrigger;
     }
 
-    public int getCooldown() {
+    protected int getCooldown() {
         return cooldown;
     }
 
-    public Instant getLastAbilityInstant(final UUID playerUUID) {
-        return playerToLastAbilityInstant.get(playerUUID);
-    }
-
-    public void setLastAbilityInstant(final UUID playerUUID, final Instant abilityInstant) {
-        playerToLastAbilityInstant.put(playerUUID, abilityInstant);
+    public double getRemainingCooldown(final UUID playerUUID) {
+        return cooldown
+            - (durationElapsedSinceInstant(playerToLastAbilityRefresh.get(playerUUID)).toMillis() / 1000.0);
     }
 
     public boolean isAbilityOnCooldown(final UUID playerUUID) {
         return playerToChargeCount.containsKey(playerUUID) && playerToChargeCount.get(playerUUID) == 0;
+    }
+
+    protected void setLastAbilityRefresh(final UUID playerUUID, final Instant lastAbilityRefresh) {
+        playerToLastAbilityRefresh.put(playerUUID, lastAbilityRefresh);
+    }
+
+    protected int getMaxCharges() {
+        return maxCharges;
+    }
+
+    protected void cancelAndRemoveIncrementChargeTask(final UUID playerUUID) {
+        if (playerToIncrementChargeTask.containsKey(playerUUID)) {
+            playerToIncrementChargeTask.get(playerUUID).cancel();
+            playerToIncrementChargeTask.remove(playerUUID);
+        }
+    }
+
+    protected void setChargeCount(final UUID playerUUID, final Integer chargeCount) {
+        playerToChargeCount.put(playerUUID, chargeCount);
     }
 
     public void onProjectileLaunch(final EntityShootBowEvent event) {
@@ -94,7 +112,6 @@ public abstract class ArrowAbility implements Ability, InitializedAbility {
                         arrowTriggerCopy.setAmount(1);
                         AbilityUtils.addItemForPlayer(player.getInventory(), arrowTriggerCopy);
                     }
-                    setLastAbilityInstant(player.getUniqueId(), Instant.now());
                     player.sendMessage(name + " - " + playerToChargeCount.get(player.getUniqueId()) + "/" + maxCharges
                         + " charges");
 
@@ -102,6 +119,7 @@ public abstract class ArrowAbility implements Ability, InitializedAbility {
                         playerToIncrementChargeTask.get(player.getUniqueId()).cancel();
                         playerToIncrementChargeTask.remove(player.getUniqueId());
                     }
+                    playerToLastAbilityRefresh.put(player.getUniqueId(), Instant.now());
                 }
             };
             incrementChargeTask.runTaskTimer(
@@ -110,7 +128,7 @@ public abstract class ArrowAbility implements Ability, InitializedAbility {
                 (long) cooldown * Constants.TICKS_PER_SECOND
             );
             playerToIncrementChargeTask.put(player.getUniqueId(), incrementChargeTask);
-            setLastAbilityInstant(player.getUniqueId(), Instant.now());
+            playerToLastAbilityRefresh.put(player.getUniqueId(), Instant.now());
         }
     }
 
@@ -120,15 +138,14 @@ public abstract class ArrowAbility implements Ability, InitializedAbility {
 
     @Override
     public void initialize(final Player player) {
+        playerToLastAbilityRefresh.put(player.getUniqueId(), Instant.now());
         playerToChargeCount.put(player.getUniqueId(), maxCharges);
     }
 
     @Override
     public void terminate(final Player player) {
-        if (playerToIncrementChargeTask.containsKey(player.getUniqueId())) {
-            playerToIncrementChargeTask.get(player.getUniqueId()).cancel();
-            playerToIncrementChargeTask.remove(player.getUniqueId());
-        }
+        playerToLastAbilityRefresh.remove(player.getUniqueId());
+        cancelAndRemoveIncrementChargeTask(player.getUniqueId());
         playerToChargeCount.remove(player.getUniqueId());
     }
 

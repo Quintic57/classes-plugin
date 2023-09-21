@@ -4,6 +4,7 @@ import my.dw.classesplugin.model.abilities.ActiveThrowableAbility;
 import my.dw.classesplugin.utils.Constants;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -15,19 +16,21 @@ public class AlchemistDisAbility extends ActiveThrowableAbility {
 
     public AlchemistDisAbility() {
         super(
-            "Incapacitate",
+            "Nigredo",
             generatePotionMetaTrigger(
                 Material.LINGERING_POTION,
-                "Incapacitate",
+                "Nigredo",
                 List.of(
                     new PotionEffect(PotionEffectType.BLINDNESS, 5 * Constants.TICKS_PER_SECOND, 0),
                     new PotionEffect(PotionEffectType.SLOW, 5 * Constants.TICKS_PER_SECOND, 2)
                 ),
                 Color.BLACK,
-                List.of("Continuously blinds and slows in a large AOE", "Number of Charges: 1", "Cooldown: 15s")
+                List.of("Continuously blinds and slows in a large AOE", "Number of Charges: 2", "Cooldown: 15s"),
+                2
             ),
             0,
-            15
+            15,
+            2
         );
     }
 

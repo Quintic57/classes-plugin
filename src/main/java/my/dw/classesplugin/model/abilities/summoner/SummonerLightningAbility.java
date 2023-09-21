@@ -8,6 +8,8 @@ import org.bukkit.inventory.ItemStack;
 
 import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
 
+import java.time.Instant;
+
 public class SummonerLightningAbility extends ActiveAbility {
 
     public SummonerLightningAbility() {
@@ -20,14 +22,14 @@ public class SummonerLightningAbility extends ActiveAbility {
     }
 
     @Override
-    public boolean handleAbility(final Player player, ItemStack itemTrigger) {
+    public void handleAbility(final Player player, ItemStack itemTrigger) {
         final Block targetBlock = player.getTargetBlock(null, 50);
         if (targetBlock.getType().equals(Material.AIR)) {
             player.sendMessage("The target block is too far away");
-            return false;
+            return;
         }
 
         targetBlock.getWorld().strikeLightning(targetBlock.getLocation());
-        return true;
+        setLastAbilityInstant(player.getUniqueId(), Instant.now());
     }
 }

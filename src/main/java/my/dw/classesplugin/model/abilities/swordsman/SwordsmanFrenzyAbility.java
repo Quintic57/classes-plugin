@@ -14,6 +14,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,6 @@ import java.util.UUID;
 
 import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
 
-//TODO: This might be better as a toggleable ability (i.e. no CD, buffs only last whilst toggled on)
 public class SwordsmanFrenzyAbility extends ActiveAbility implements ListenedAbility {
 
     private final List<PotionEffect> effects;
@@ -46,14 +46,14 @@ public class SwordsmanFrenzyAbility extends ActiveAbility implements ListenedAbi
             30
         );
         this.effects = List.of(
-            new PotionEffect(PotionEffectType.INCREASE_DAMAGE, this.duration * Constants.TICKS_PER_SECOND, 1),
-            new PotionEffect(PotionEffectType.SPEED, this.duration * Constants.TICKS_PER_SECOND, 0)
+            new PotionEffect(PotionEffectType.INCREASE_DAMAGE, getDuration() * Constants.TICKS_PER_SECOND, 1),
+            new PotionEffect(PotionEffectType.SPEED, getDuration() * Constants.TICKS_PER_SECOND, 0)
         );
         this.playerBerserkStatus = new HashMap<>();
     }
 
     @Override
-    public boolean handleAbility(final Player player, ItemStack itemTrigger) {
+    public void handleAbility(final Player player, ItemStack itemTrigger) {
         playerBerserkStatus.put(player.getUniqueId(), true);
         final BukkitRunnable task = new BukkitRunnable() {
             @Override
@@ -61,9 +61,10 @@ public class SwordsmanFrenzyAbility extends ActiveAbility implements ListenedAbi
                 playerBerserkStatus.put(player.getUniqueId(), false);
             }
         };
-        task.runTaskLater(ClassesPlugin.getPlugin(), (long) this.duration * Constants.TICKS_PER_SECOND);
+        task.runTaskLater(ClassesPlugin.getPlugin(), (long) getDuration() * Constants.TICKS_PER_SECOND);
 
-        return player.addPotionEffects(this.effects);
+        player.addPotionEffects(this.effects);
+        setLastAbilityInstant(player.getUniqueId(), Instant.now());
     }
 
     @Override
