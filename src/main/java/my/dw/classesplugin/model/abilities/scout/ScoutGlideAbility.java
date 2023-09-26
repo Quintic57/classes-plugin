@@ -9,9 +9,13 @@ import my.dw.classesplugin.model.abilities.ActiveDynamicAbility;
 import my.dw.classesplugin.model.abilities.ListenedAbility;
 import my.dw.classesplugin.utils.AbilityUtils;
 import my.dw.classesplugin.utils.Constants;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class ScoutGlideAbility extends ActiveDynamicAbility implements ListenedAbility {
+public class ScoutGlideAbility extends ActiveDynamicAbility implements ListenedAbility<EntityToggleGlideEvent>, Listener {
 
     private final Map<UUID, Set<BukkitRunnable>> playerToAbilityTasks;
 
@@ -45,6 +49,8 @@ public class ScoutGlideAbility extends ActiveDynamicAbility implements ListenedA
             new HashMap<>()
         );
         playerToAbilityTasks = new HashMap<>();
+
+        Bukkit.getServer().getPluginManager().registerEvents(this, ClassesPlugin.getPlugin());
     }
 
     @Override
@@ -53,18 +59,12 @@ public class ScoutGlideAbility extends ActiveDynamicAbility implements ListenedA
     }
 
     @Override
-    public ListenerEventType getListenerEventType() {
-        return ListenerEventType.ENTITY_TOGGLE_GLIDE_EVENT;
-    }
-
-    @Override
-    public boolean isValidConditionForAbilityEvent(final Event event) {
-        final EntityToggleGlideEvent entityToggleGlideEvent = (EntityToggleGlideEvent) event;
-        if (!(entityToggleGlideEvent.getEntity() instanceof Player)) {
+    public boolean isValidConditionForAbilityEvent(final EntityToggleGlideEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
             return false;
         }
 
-        final Player player = (Player) entityToggleGlideEvent.getEntity();
+        final Player player = (Player) event.getEntity();
         // Since player can manually equip glider, have to check cooldown again when handling gliding event.
         if (isAbilityOnCooldown(player.getUniqueId())) {
             player.sendMessage(
@@ -74,20 +74,23 @@ public class ScoutGlideAbility extends ActiveDynamicAbility implements ListenedA
                 + " seconds"
             );
             resetChestArmor(player.getInventory());
-            entityToggleGlideEvent.setCancelled(true);
+            event.setCancelled(true);
             return false;
         }
 
         return Class.isClassEquipped(player, Class.SCOUT.name());
     }
 
+    @EventHandler
     @Override
-    public void handleAbilityEvent(final Event event) {
-        final EntityToggleGlideEvent abilityEvent = (EntityToggleGlideEvent) event;
-        final Player player = (Player) abilityEvent.getEntity();
-        final PlayerInventory inventory = player.getInventory();
+    public void handleAbilityEvent(final EntityToggleGlideEvent event) {
+        if (!isValidConditionForAbilityEvent(event)) {
+            return;
+        }
 
-        if (abilityEvent.isGliding()) {
+        final Player player = (Player) event.getEntity();
+        final PlayerInventory inventory = player.getInventory();
+        if (event.isGliding()) {
             final BukkitRunnable messageTask = new BukkitRunnable() {
                 @Override
                 public void run() {

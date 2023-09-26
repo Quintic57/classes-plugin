@@ -8,9 +8,6 @@ import my.dw.classesplugin.listener.ArrowAbilityOnHitListener;
 import my.dw.classesplugin.listener.ArrowAbilityOnLaunchListener;
 import my.dw.classesplugin.listener.GuiInventoryListener;
 import my.dw.classesplugin.listener.PlayerDeathEventListener;
-import my.dw.classesplugin.listener.classes.EntityDamageByEntityEventListener;
-import my.dw.classesplugin.listener.classes.EntityDamageEventListener;
-import my.dw.classesplugin.listener.classes.EntityToggleGlideEventListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ClassesPlugin extends JavaPlugin {
@@ -29,9 +26,6 @@ public final class ClassesPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ActiveAbilityListener(), this);
         getServer().getPluginManager().registerEvents(new ArrowAbilityOnLaunchListener(), this);
         getServer().getPluginManager().registerEvents(new ArrowAbilityOnHitListener(), this);
-        getServer().getPluginManager().registerEvents(new EntityDamageEventListener(), this);
-        getServer().getPluginManager().registerEvents(new EntityDamageByEntityEventListener(), this);
-        getServer().getPluginManager().registerEvents(new EntityToggleGlideEventListener(), this);
         getCommand("unequipclass").setExecutor(new UnequipClassCommand());
         getCommand("equipclass").setExecutor(new EquipClassCommand());
     }
