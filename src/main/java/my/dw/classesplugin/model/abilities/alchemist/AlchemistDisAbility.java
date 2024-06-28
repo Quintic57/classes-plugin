@@ -22,7 +22,7 @@ public class AlchemistDisAbility extends ActiveThrowableAbility {
                 "Nigredo",
                 List.of(
                     new PotionEffect(PotionEffectType.BLINDNESS, 5 * Constants.TICKS_PER_SECOND, 0),
-                    new PotionEffect(PotionEffectType.SLOW, 5 * Constants.TICKS_PER_SECOND, 2)
+                    new PotionEffect(PotionEffectType.SLOWNESS, 5 * Constants.TICKS_PER_SECOND, 2)
                 ),
                 Color.BLACK,
                 List.of("Continuously blinds and slows in a large AOE", "Number of Charges: 2", "Cooldown: 15s"),

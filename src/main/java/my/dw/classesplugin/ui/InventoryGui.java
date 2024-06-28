@@ -100,7 +100,7 @@ public abstract class InventoryGui {
         final ItemMeta meta = displayItem.getItemMeta();
         meta.setDisplayName(displayName);
         meta.setLore(description);
-        meta.addEnchant(Enchantment.DURABILITY, 1, false);
+        meta.addEnchant(Enchantment.UNBREAKING, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
         displayItem.setItemMeta(meta);
 
@@ -114,10 +114,10 @@ public abstract class InventoryGui {
         final ItemStack displayItem = new ItemStack(itemMaterial);
         final PotionMeta meta = (PotionMeta) displayItem.getItemMeta();
         meta.setColor(color);
-        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+        meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         meta.setDisplayName(displayName);
         meta.setLore(description);
-        meta.addEnchant(Enchantment.DURABILITY, 1, false);
+        meta.addEnchant(Enchantment.UNBREAKING, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
         displayItem.setItemMeta(meta);
 

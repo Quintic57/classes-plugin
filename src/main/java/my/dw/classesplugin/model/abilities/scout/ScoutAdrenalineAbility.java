@@ -35,8 +35,8 @@ public class ScoutAdrenalineAbility extends ActiveAbility {
         );
         this.effects = List.of(
             new PotionEffect(PotionEffectType.SPEED, getDuration() * Constants.TICKS_PER_SECOND, 1),
-            new PotionEffect(PotionEffectType.JUMP, getDuration() * Constants.TICKS_PER_SECOND, 1),
-            new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, getDuration() * Constants.TICKS_PER_SECOND, 0)
+            new PotionEffect(PotionEffectType.JUMP_BOOST, getDuration() * Constants.TICKS_PER_SECOND, 1),
+            new PotionEffect(PotionEffectType.RESISTANCE, getDuration() * Constants.TICKS_PER_SECOND, 0)
         );
     }
 

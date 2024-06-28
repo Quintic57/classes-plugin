@@ -69,7 +69,7 @@ public class ArcherReconAbility extends ArrowAbility {
                     .filter(e -> e instanceof LivingEntity)
                     .filter(e -> !e.getUniqueId().equals(((Player) arrow.getShooter()).getUniqueId()))
                     .forEach(e -> ((LivingEntity) e).addPotionEffect(effect));
-                arrow.getWorld().spawnParticle(Particle.REDSTONE, arrow.getLocation().add(0, 0.5, 0), 20, 1.0, 0.25, 1.0, 0.25,
+                arrow.getWorld().spawnParticle(Particle.DUST, arrow.getLocation().add(0, 0.5, 0), 20, 1.0, 0.25, 1.0, 0.25,
                     new Particle.DustOptions(Color.YELLOW, 2F));
                 arrow.getWorld().playSound(arrow.getLocation(), Sound.ENTITY_SHEEP_SHEAR, (float) (CUBE_LENGTH / 10), 1F);
             }

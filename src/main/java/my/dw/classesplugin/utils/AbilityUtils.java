@@ -69,7 +69,7 @@ public class AbilityUtils {
                                                     final List<ItemFlag> itemFlags) {
         final ItemStack itemTrigger = new ItemStack(material);
         final ItemMeta itemMeta = itemTrigger.getItemMeta();
-        itemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        itemMeta.addEnchant(Enchantment.UNBREAKING, 1, false);
         itemMeta.setUnbreakable(true);
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
         itemMeta.setDisplayName(displayName);
@@ -115,8 +115,8 @@ public class AbilityUtils {
         final PotionMeta itemMeta = (PotionMeta) itemTrigger.getItemMeta();
         effects.forEach(e -> itemMeta.addCustomEffect(e, false));
         itemMeta.setColor(color);
-        itemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
-        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
+        itemMeta.addEnchant(Enchantment.UNBREAKING, 1, false);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         itemMeta.setDisplayName(displayName);
         itemMeta.setLore(lore);
         itemFlags.forEach(itemMeta::addItemFlags);

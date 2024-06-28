@@ -42,7 +42,7 @@ public class ArcherExplosiveAbility extends ArrowAbility {
                 Material.ARROW,
                 "Explosive Tipped Arrow",
                 List.of("Deals AOE explosive damage based on distance traveled", "Number of Charges: 1", "Cooldown: 30s"),
-                List.of(ItemFlag.HIDE_POTION_EFFECTS)
+                List.of(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
             ),
             1 // TODO: Change this back once you've had your fun
         );
@@ -73,7 +73,7 @@ public class ArcherExplosiveAbility extends ArrowAbility {
                 } else {
                     color = Color.RED;
                 }
-                arrow.getWorld().spawnParticle(Particle.REDSTONE, arrow.getLocation(), 2, 0.2, 0.2, 0.2, 0,
+                arrow.getWorld().spawnParticle(Particle.DUST, arrow.getLocation(), 2, 0.2, 0.2, 0.2, 0,
                     new Particle.DustOptions(color, 2F));
 
             }

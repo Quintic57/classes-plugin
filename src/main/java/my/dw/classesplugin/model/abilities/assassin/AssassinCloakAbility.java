@@ -105,7 +105,7 @@ public class AssassinCloakAbility extends ActiveAbility implements ListenedAbili
 
     private void resetPlayerState(final Player player) {
         player.getActivePotionEffects().stream()
-            .filter(p -> !p.getType().equals(PotionEffectType.DAMAGE_RESISTANCE)) // ignore assassin armor ability
+            .filter(p -> !p.getType().equals(PotionEffectType.RESISTANCE)) // ignore assassin armor ability
             .forEach(p -> player.addPotionEffect(
                 new PotionEffect(p.getType(), p.getDuration() + 1, p.getAmplifier(), false, true)));
         if (Class.isClassEquipped(player, Class.ASSASSIN.name())

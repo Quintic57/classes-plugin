@@ -17,28 +17,28 @@ public enum Armor {
         Material.DIAMOND_CHESTPLATE,
         Material.IRON_LEGGINGS,
         Material.IRON_BOOTS,
-        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 1)
+        Map.of(Enchantment.PROTECTION, 1)
     ),
     ARCHER(
         Material.CHAINMAIL_HELMET,
         Material.CHAINMAIL_CHESTPLATE,
         Material.CHAINMAIL_LEGGINGS,
         Material.CHAINMAIL_BOOTS,
-        Map.of(Enchantment.PROTECTION_PROJECTILE, 3)
+        Map.of(Enchantment.PROJECTILE_PROTECTION, 3)
     ),
     JUGGERNAUT(
         Material.NETHERITE_HELMET,
         Material.NETHERITE_CHESTPLATE,
         Material.NETHERITE_LEGGINGS,
         Material.NETHERITE_BOOTS,
-        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 1)
+        Map.of(Enchantment.PROTECTION, 1)
     ),
     SPECIALIST(),
     SCOUT(
-        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 1),
-        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 1),
-        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 1),
-        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 1, Enchantment.PROTECTION_FALL, 4),
+        Map.of(Enchantment.PROTECTION, 1),
+        Map.of(Enchantment.PROTECTION, 1),
+        Map.of(Enchantment.PROTECTION, 1),
+        Map.of(Enchantment.PROTECTION, 1, Enchantment.FEATHER_FALLING, 4),
         Color.BLACK
     ),
     CAPTAIN(),
@@ -47,7 +47,7 @@ public enum Armor {
         Material.GOLDEN_CHESTPLATE,
         Material.GOLDEN_LEGGINGS,
         Material.GOLDEN_BOOTS,
-        Map.of(Enchantment.PROTECTION_ENVIRONMENTAL, 3)
+        Map.of(Enchantment.PROTECTION, 3)
     ),
     KNIGHT(
         Material.DIAMOND_HELMET,

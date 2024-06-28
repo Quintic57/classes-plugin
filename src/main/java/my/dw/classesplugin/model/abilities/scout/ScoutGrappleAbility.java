@@ -35,7 +35,7 @@ public class ScoutGrappleAbility extends ArrowAbility {
                 Material.ARROW,
                 "Grapple Hook",
                 List.of("Can only be used to travel up.", "Teleports the user to the arrow's terminus", "Cooldown: 30s"),
-                List.of(ItemFlag.HIDE_POTION_EFFECTS)
+                List.of(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
             ),
             15 // TODO: Change back
         );

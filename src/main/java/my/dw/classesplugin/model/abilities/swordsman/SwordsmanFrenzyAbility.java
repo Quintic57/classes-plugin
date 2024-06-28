@@ -46,7 +46,7 @@ public class SwordsmanFrenzyAbility extends ActiveAbility implements ListenedAbi
             30
         );
         this.effects = List.of(
-            new PotionEffect(PotionEffectType.INCREASE_DAMAGE, getDuration() * Constants.TICKS_PER_SECOND, 1),
+            new PotionEffect(PotionEffectType.STRENGTH, getDuration() * Constants.TICKS_PER_SECOND, 1),
             new PotionEffect(PotionEffectType.SPEED, getDuration() * Constants.TICKS_PER_SECOND, 0)
         );
         this.playerBerserkStatus = new HashMap<>();

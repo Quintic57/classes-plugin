@@ -8,12 +8,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Map;
 
 public enum Weapon {
-    ASSASSIN(Material.NETHERITE_SWORD, Map.of(Enchantment.DAMAGE_ALL, 5), "Kellen's Dagger"),
-    SWORDSMAN(Material.IRON_SWORD, Map.of(Enchantment.DAMAGE_ALL, 3, Enchantment.FIRE_ASPECT, 1), "Excaliburn"),
-    ARCHER(Material.BOW, Map.of(Enchantment.ARROW_DAMAGE, 3, Enchantment.ARROW_INFINITE, 1), "Deadeye"),
+    ASSASSIN(Material.NETHERITE_SWORD, Map.of(Enchantment.SHARPNESS, 5), "Kellen's Dagger"),
+    SWORDSMAN(Material.IRON_SWORD, Map.of(Enchantment.SHARPNESS, 3, Enchantment.FIRE_ASPECT, 1), "Excaliburn"),
+    ARCHER(Material.BOW, Map.of(Enchantment.POWER, 3, Enchantment.INFINITY, 1), "Deadeye"),
     JUGGERNAUT(Material.WOODEN_SWORD, Map.of(Enchantment.SWEEPING_EDGE, 3), "Beat Stick"),
     SPECIALIST(Material.STONE_SWORD, Map.of(), ""),
-    SCOUT(Material.BOW, Map.of(Enchantment.ARROW_INFINITE, 1), "Recurve Bow"),
+    SCOUT(Material.BOW, Map.of(Enchantment.INFINITY, 1), "Recurve Bow"),
     CAPTAIN(Material.STONE_SWORD, Map.of(), ""),
     ALCHEMIST(Material.GOLDEN_SWORD, Map.of(Enchantment.FIRE_ASPECT, 2), "Citrinitas"),
     KNIGHT(Material.DIAMOND_SWORD, Map.of(), ""),

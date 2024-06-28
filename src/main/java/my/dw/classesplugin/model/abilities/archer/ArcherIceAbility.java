@@ -19,7 +19,7 @@ public class ArcherIceAbility extends ArrowAbility {
             generatePotionMetaTrigger(
                 Material.TIPPED_ARROW,
                 "Ice Tipped Arrow",
-                List.of(new PotionEffect(PotionEffectType.SLOW, 8 * Constants.TICKS_PER_SECOND, 3)),
+                List.of(new PotionEffect(PotionEffectType.SLOWNESS, 8 * Constants.TICKS_PER_SECOND, 3)),
                 Color.GRAY,
                 List.of("Slows the target by 60% for 8s", "Number of Charges: 2", "Cooldown: 15s"),
                 2

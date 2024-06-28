@@ -25,8 +25,8 @@ public class JuggernautArmorAbility extends PassiveAbility {
 
     public JuggernautArmorAbility() {
         super("Made Like a Tree");
-        this.resistanceEffect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, (int) (0.9 * Constants.TICKS_PER_SECOND), 0);
-        this.slowEffect = new PotionEffect(PotionEffectType.SLOW, INFINITE_DURATION, 0, false, false);
+        this.resistanceEffect = new PotionEffect(PotionEffectType.RESISTANCE, (int) (0.9 * Constants.TICKS_PER_SECOND), 0);
+        this.slowEffect = new PotionEffect(PotionEffectType.SLOWNESS, INFINITE_DURATION, 0, false, false);
         this.playerToLocation = new HashMap<>();
 
         final BukkitRunnable task = new BukkitRunnable() {

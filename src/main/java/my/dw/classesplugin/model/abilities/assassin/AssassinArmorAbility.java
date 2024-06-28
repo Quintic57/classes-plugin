@@ -15,7 +15,7 @@ public class AssassinArmorAbility extends PassiveAbility {
 
     public AssassinArmorAbility() {
         super("Nerves of Steal");
-        this.effect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, INFINITE_DURATION, 0, false, false);
+        this.effect = new PotionEffect(PotionEffectType.RESISTANCE, INFINITE_DURATION, 0, false, false);
     }
 
     @Override

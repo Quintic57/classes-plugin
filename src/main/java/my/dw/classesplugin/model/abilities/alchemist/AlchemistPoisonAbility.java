@@ -22,8 +22,8 @@ public class AlchemistPoisonAbility extends ActiveThrowableAbility {
                 "Albedo",
                 List.of(
                     new PotionEffect(PotionEffectType.POISON, 5 * Constants.TICKS_PER_SECOND, 1),
-                    new PotionEffect(PotionEffectType.SLOW, 5 * Constants.TICKS_PER_SECOND, 0),
-                    new PotionEffect(PotionEffectType.CONFUSION, 8 * Constants.TICKS_PER_SECOND, 0)
+                    new PotionEffect(PotionEffectType.SLOWNESS, 5 * Constants.TICKS_PER_SECOND, 0),
+                    new PotionEffect(PotionEffectType.NAUSEA, 8 * Constants.TICKS_PER_SECOND, 0)
                 ),
                 Color.WHITE,
                 List.of("Continuously disorients and poisons in a large AOE", "Number of Charges: 1", "Cooldown: 15s")

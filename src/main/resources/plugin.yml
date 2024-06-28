@@ -1,7 +1,7 @@
 name: classes-plugin
 version: '${project.version}'
 main: my.dw.classesplugin.ClassesPlugin
-api-version: 1.20
+api-version: 1.21
 commands:
   equipclass:
     description: Equips the specified class

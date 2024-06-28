@@ -35,7 +35,7 @@ public class SwordsmanShieldAbility extends PassiveAbility implements ListenedAb
 
         final ItemStack shieldItem = new ItemStack(Material.SHIELD);
         final ItemMeta shieldMeta = shieldItem.getItemMeta();
-        shieldMeta.addEnchant(Enchantment.DURABILITY, 1000, true);
+        shieldMeta.addEnchant(Enchantment.UNBREAKING, 1000, true);
         shieldMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         shieldItem.setItemMeta(shieldMeta);
         this.shieldItem = shieldItem;
