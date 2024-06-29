@@ -2,16 +2,12 @@ package my.dw.classesplugin.model.abilities;
 
 import org.bukkit.event.Event;
 
-public interface ListenedAbility {
+public interface ListenedAbility<T extends Event> {
 
-    enum ListenerEventType {
-        ENTITY_DAMAGE_EVENT, ENTITY_DAMAGE_BY_ENTITY_EVENT, ENTITY_TOGGLE_GLIDE_EVENT;
-    }
+    boolean isValidConditionForAbilityEvent(final T event);
 
-    ListenerEventType getListenerEventType();
+    void handleAbilityEvent(final T event);
 
-    boolean isValidConditionForAbilityEvent(final Event event);
-
-    void handleAbilityEvent(final Event event);
+    void initializeListener();
 
 }

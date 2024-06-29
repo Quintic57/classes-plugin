@@ -1,10 +1,5 @@
 package my.dw.classesplugin.utils;
 
-import my.dw.classesplugin.model.Class;
-import my.dw.classesplugin.model.abilities.Ability;
-import my.dw.classesplugin.model.abilities.ActiveAbility;
-import my.dw.classesplugin.model.abilities.ArrowAbility;
-import my.dw.classesplugin.model.abilities.ListenedAbility;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -17,41 +12,9 @@ import org.bukkit.potion.PotionEffect;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class AbilityUtils {
-
-    public static final Map<ItemStackKey, ActiveAbility> ITEM_TRIGGER_TO_ACTIVE_ABILITY;
-    public static final Map<ItemStackKey, ArrowAbility> ARROW_TRIGGER_TO_ARROW_ABILITY;
-    public static final Map<String, ArrowAbility> ABILITY_NAME_TO_ARROW_ABILITY;
-    public static final Map<Ability, String> ABILITY_TO_CLASS_NAME;
-    public static final List<ListenedAbility> LISTENED_ABILITIES;
-
-    static {
-        ITEM_TRIGGER_TO_ACTIVE_ABILITY = Arrays.stream(Class.values())
-            .flatMap(c -> c.getActiveAbilities().stream())
-            .collect(Collectors.toMap(a -> new ItemStackKey(a.getItemTrigger()), a -> a));
-        ARROW_TRIGGER_TO_ARROW_ABILITY = Arrays.stream(Class.values())
-            .flatMap(c -> c.getArrowAbilities().stream())
-            .collect(Collectors.toMap(a -> new ItemStackKey(a.getArrowTrigger()), a -> a));
-        ABILITY_NAME_TO_ARROW_ABILITY = Arrays.stream(Class.values())
-            .flatMap(c -> c.getArrowAbilities().stream())
-            .collect(Collectors.toMap(ArrowAbility::getName, a -> a));
-        ABILITY_TO_CLASS_NAME = new HashMap<>();
-        Arrays.stream(Class.values())
-            .forEach(c -> c.getAbilities().forEach(a -> ABILITY_TO_CLASS_NAME.put(a, c.name())));
-        // TODO: Should prob introduce a way to statically define order, that way multiple events get executed in the
-        //  correct order i.e. an Assassin hitting a Swordsman that's blocking
-        LISTENED_ABILITIES = Arrays.stream(Class.values())
-            .flatMap(c -> c.getAbilities().stream())
-            .filter(a -> a instanceof ListenedAbility)
-            .map(a -> (ListenedAbility) a)
-            .collect(Collectors.toList());
-    }
 
     public static ItemStack generateItemMetaTrigger(final Material material, final String displayName) {
         return generateItemMetaTrigger(material, displayName, List.of("No description implemented"));

@@ -6,11 +6,15 @@ import my.dw.classesplugin.model.abilities.ListenedAbility;
 import my.dw.classesplugin.model.abilities.PassiveAbility;
 import my.dw.classesplugin.utils.AbilityUtils;
 import my.dw.classesplugin.utils.Constants;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class SwordsmanShieldAbility extends PassiveAbility implements ListenedAbility {
+public class SwordsmanShieldAbility extends PassiveAbility implements ListenedAbility<EntityDamageByEntityEvent>, Listener {
 
     private static final int MAX_SHIELD_HEALTH = 336;
     private static final int SHIELD_DAMAGE_MULT = 12;
@@ -43,31 +47,33 @@ public class SwordsmanShieldAbility extends PassiveAbility implements ListenedAb
     }
 
     @Override
-    public ListenerEventType getListenerEventType() {
-        return ListenerEventType.ENTITY_DAMAGE_BY_ENTITY_EVENT;
+    public void initializeListener() {
+        Bukkit.getServer().getPluginManager().registerEvents(this, ClassesPlugin.getPlugin());
     }
 
     @Override
-    public boolean isValidConditionForAbilityEvent(final Event event) {
-        final EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
-        if (!(entityDamageByEntityEvent.getEntity() instanceof Player)) {
+    public boolean isValidConditionForAbilityEvent(final EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
             return false;
         }
 
-        final Player defender = (Player) entityDamageByEntityEvent.getEntity();
+        final Player defender = (Player) event.getEntity();
         return Class.isClassEquipped(defender, Class.SWORDSMAN.name())
             && defender.isBlocking();
     }
 
+    @EventHandler(priority = EventPriority.HIGH)
     @Override
-    public void handleAbilityEvent(final Event event) {
-        final EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
-        final Player defender = (Player) entityDamageByEntityEvent.getEntity();
+    public void handleAbilityEvent(final EntityDamageByEntityEvent event) {
+        if (!isValidConditionForAbilityEvent(event)) {
+            return;
+        }
+
+        final Player defender = (Player) event.getEntity();
         final ItemStack shield = defender.getItemInUse();
         final Damageable shieldMeta = (Damageable) shield.getItemMeta();
         final int damageOnShield = shieldMeta.getDamage();
-        final int damage = (int) Math.ceil(entityDamageByEntityEvent.getDamage() * SHIELD_DAMAGE_MULT);
-
+        final int damage = (int) Math.ceil(event.getDamage() * SHIELD_DAMAGE_MULT);
         if (damageOnShield + damage >= MAX_SHIELD_HEALTH) {
             defender.playSound(defender.getLocation(), Sound.ITEM_SHIELD_BREAK, 1F, 1F);
             defender.setCooldown(Material.SHIELD, 15 * Constants.TICKS_PER_SECOND);

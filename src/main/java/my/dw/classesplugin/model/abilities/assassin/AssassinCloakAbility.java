@@ -6,9 +6,13 @@ import my.dw.classesplugin.model.abilities.ActiveAbility;
 import my.dw.classesplugin.model.abilities.ListenedAbility;
 import my.dw.classesplugin.utils.AbilityUtils;
 import my.dw.classesplugin.utils.Constants;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -23,7 +27,7 @@ import java.util.stream.Collectors;
 import static my.dw.classesplugin.utils.AbilityUtils.durationElapsedSinceInstant;
 import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
 
-public class AssassinCloakAbility extends ActiveAbility implements ListenedAbility {
+public class AssassinCloakAbility extends ActiveAbility implements ListenedAbility<EntityDamageByEntityEvent>, Listener {
 
     private final List<PotionEffect> effects;
 
@@ -49,6 +53,11 @@ public class AssassinCloakAbility extends ActiveAbility implements ListenedAbili
     }
 
     @Override
+    public void initializeListener() {
+        Bukkit.getServer().getPluginManager().registerEvents(this, ClassesPlugin.getPlugin());
+    }
+
+    @Override
     public void handleAbility(final Player player, final ItemStack itemTrigger) {
         player.getActivePotionEffects().forEach(p -> player.addPotionEffect(
             new PotionEffect(p.getType(), p.getDuration() + 1, p.getAmplifier(), false, false)));
@@ -66,31 +75,28 @@ public class AssassinCloakAbility extends ActiveAbility implements ListenedAbili
     }
 
     @Override
-    public ListenerEventType getListenerEventType() {
-        return ListenerEventType.ENTITY_DAMAGE_BY_ENTITY_EVENT;
-    }
-
-    @Override
-    public boolean isValidConditionForAbilityEvent(final Event event) {
-        final EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
-        if (!(entityDamageByEntityEvent.getDamager() instanceof Player)) {
+    public boolean isValidConditionForAbilityEvent(final EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player)) {
             return false;
         }
 
-        final Player attacker = (Player) entityDamageByEntityEvent.getDamager();
+        final Player attacker = (Player) event.getDamager();
         return Class.isClassEquipped(attacker, Class.ASSASSIN.name())
             && isAbilityDurationActive(attacker.getUniqueId())
             && isAbilityEffectActive(attacker.getActivePotionEffects());
     }
 
+    @EventHandler(priority = EventPriority.LOW)
     @Override
-    public void handleAbilityEvent(final Event event) {
-        final EntityDamageByEntityEvent abilityEvent = (EntityDamageByEntityEvent) event;
-        final Player attacker = (Player) abilityEvent.getDamager();
+    public void handleAbilityEvent(final EntityDamageByEntityEvent event) {
+        if (!isValidConditionForAbilityEvent(event)) {
+            return;
+        }
 
+        final Player attacker = (Player) event.getDamager();
         final long abilityDuration = durationElapsedSinceInstant(
             getLastAbilityInstant(attacker.getUniqueId())).getSeconds();
-        abilityEvent.setDamage(abilityEvent.getDamage() * (1.25 + (0.0625 * Math.min(abilityDuration, 8))));
+        event.setDamage(event.getDamage() * (1.25 + (0.0625 * Math.min(abilityDuration, 8))));
         attacker.removePotionEffect(PotionEffectType.INVISIBILITY);
         resetPlayerState(attacker);
     }

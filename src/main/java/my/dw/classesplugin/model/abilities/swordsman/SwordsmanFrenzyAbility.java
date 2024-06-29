@@ -5,9 +5,13 @@ import my.dw.classesplugin.model.Class;
 import my.dw.classesplugin.model.abilities.ActiveAbility;
 import my.dw.classesplugin.model.abilities.ListenedAbility;
 import my.dw.classesplugin.utils.Constants;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -22,7 +26,7 @@ import java.util.UUID;
 
 import static my.dw.classesplugin.utils.AbilityUtils.generateItemMetaTrigger;
 
-public class SwordsmanFrenzyAbility extends ActiveAbility implements ListenedAbility {
+public class SwordsmanFrenzyAbility extends ActiveAbility implements ListenedAbility<EntityDamageEvent>, Listener {
 
     private final List<PotionEffect> effects;
 
@@ -53,6 +57,11 @@ public class SwordsmanFrenzyAbility extends ActiveAbility implements ListenedAbi
     }
 
     @Override
+    public void initializeListener() {
+        Bukkit.getServer().getPluginManager().registerEvents(this, ClassesPlugin.getPlugin());
+    }
+
+    @Override()
     public void handleAbility(final Player player, ItemStack itemTrigger) {
         playerBerserkStatus.put(player.getUniqueId(), true);
         final BukkitRunnable task = new BukkitRunnable() {
@@ -68,27 +77,25 @@ public class SwordsmanFrenzyAbility extends ActiveAbility implements ListenedAbi
     }
 
     @Override
-    public ListenerEventType getListenerEventType() {
-        return ListenerEventType.ENTITY_DAMAGE_EVENT;
-    }
-
-    @Override
-    public boolean isValidConditionForAbilityEvent(final Event event) {
-        final EntityDamageEvent entityDamageEvent = (EntityDamageEvent) event;
-        if (!(entityDamageEvent.getEntity() instanceof Player)) {
+    public boolean isValidConditionForAbilityEvent(final EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
             return false;
         }
 
-        final Player defender = (Player) entityDamageEvent.getEntity();
+        final Player defender = (Player) event.getEntity();
         return Class.isClassEquipped(defender, Class.SWORDSMAN.name())
             && playerBerserkStatus.containsKey(defender.getUniqueId())
             && playerBerserkStatus.get(defender.getUniqueId());
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     @Override
-    public void handleAbilityEvent(final Event event) {
-        final EntityDamageEvent entityDamageEvent = (EntityDamageEvent) event;
-        entityDamageEvent.setDamage(entityDamageEvent.getDamage() * INCOMING_DMG_MULT);
+    public void handleAbilityEvent(final EntityDamageEvent event) {
+        if (!isValidConditionForAbilityEvent(event)) {
+            return;
+        }
+
+        event.setDamage(event.getDamage() * INCOMING_DMG_MULT);
     }
 
 }

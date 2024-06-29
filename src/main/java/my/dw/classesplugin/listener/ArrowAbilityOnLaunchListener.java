@@ -1,5 +1,6 @@
 package my.dw.classesplugin.listener;
 
+import my.dw.classesplugin.ClassesPlugin;
 import my.dw.classesplugin.model.Class;
 import my.dw.classesplugin.model.abilities.ArrowAbility;
 import my.dw.classesplugin.utils.AbilityUtils;
@@ -26,17 +27,17 @@ public class ArrowAbilityOnLaunchListener implements Listener {
         return event.getEntity() instanceof Player
             && event.getProjectile() instanceof AbstractArrow
             && (Objects.nonNull(event.getConsumable())
-            && AbilityUtils.ARROW_TRIGGER_TO_ARROW_ABILITY.containsKey(ItemStackKey.from(event.getConsumable())));
+            && ClassesPlugin.ARROW_TRIGGER_TO_ARROW_ABILITY.containsKey(ItemStackKey.from(event.getConsumable())));
     }
 
     private void handleArrowAbilityOnLaunchEvent(final EntityShootBowEvent event) {
         final Player player = (Player) event.getEntity();
         final ItemStack arrowTrigger = event.getConsumable();
         final ArrowAbility ability
-            = AbilityUtils.ARROW_TRIGGER_TO_ARROW_ABILITY.get(ItemStackKey.from(arrowTrigger));
+            = ClassesPlugin.ARROW_TRIGGER_TO_ARROW_ABILITY.get(ItemStackKey.from(arrowTrigger));
 
         // Check that the player has the correct character class metadata tag before attempting to resolve the ability
-        if (!Class.isClassEquipped(player, AbilityUtils.ABILITY_TO_CLASS_NAME.get(ability))) {
+        if (!Class.isClassEquipped(player, ClassesPlugin.ABILITY_TO_CLASS_NAME.get(ability))) {
             return;
         }
 
